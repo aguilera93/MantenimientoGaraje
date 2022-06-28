@@ -1,10 +1,10 @@
 package aguilera.code.mantenimientogaraje
 
-
 import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
 import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentMainBinding
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -14,10 +14,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.recyclerview.widget.LinearLayoutManager
 
-
 class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickInterface {
 
-    private lateinit var viewModel: VehicleViewModel
+    private lateinit var viewModel: GarageViewModel
     private lateinit var vehicleAdapter: VehicleAdapter
 
     private var _binding: FragmentMainBinding? = null
@@ -38,7 +37,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
         viewModel = ViewModelProvider(
             this,
             AndroidViewModelFactory.getInstance(requireActivity().getApplication())
-        ).get(VehicleViewModel::class.java)
+        ).get(GarageViewModel::class.java)
 
         vehicleAdapter = VehicleAdapter(this, this)
 
@@ -95,14 +94,13 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
         }
     }
 
-    fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         requireActivity().menuInflater.inflate(R.menu.main_menu, menu)
-        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.clearVehicleItem -> clearVehicle()
+            R.id.clearItem -> clearVehicle()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -115,20 +113,12 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
     override fun onVehicleClick(vehiculo: Vehiculo) {
         // opening a new intent and passing a data to it.
         activity?.let {
-            val fragment = NewVehicleFragment()
+            val fragment = ShowVehicleFragment()
             fragment.arguments = Bundle().apply {
-                putString("type", "Edit")
                 putString("matricula", vehiculo.matricula)
-                putString("marca", vehiculo.marca)
-                putString("modelo", vehiculo.modelo)
-                if (vehiculo.kms != null) {
-                    putString("kms", vehiculo.kms.toString())
-                }
-                putString("vin", vehiculo.vin)
-                putString("detalles", vehiculo.detalles)
             }
             it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
-                .addToBackStack("NewVehicleFragment").commit()
+                .addToBackStack("ShowVehicleFragment").commit()
         }
     }
 }

@@ -1,18 +1,27 @@
 package aguilera.code.mantenimientogaraje
 
-import aguilera.code.mantenimientogaraje.databinding.FragmentNewVehicleBinding
+import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
+import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentShowVehicleBinding
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.*
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 
-class ShowVehicleFragment : Fragment() {
+class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIconClickInterface {
+
+    private lateinit var viewModel: GarageViewModel
+    private lateinit var conceptAdapter: ConceptAdapter
+
     private var _binding: FragmentShowVehicleBinding? = null
     private val binding get() = _binding!!
+
+    var matricula = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,17 +40,114 @@ class ShowVehicleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val matricula = arguments?.getString("matricula")
+        matricula = arguments?.getString("matricula").toString()
 
-        //(activity as AppCompatActivity).supportActionBar?.setSubtitle("$matricula")
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication())
+        ).get(GarageViewModel::class.java)
 
-        binding.btnNewC.setOnClickListener {
+        conceptAdapter = ConceptAdapter(this, this)
+
+        initView()
+        observeEvents()
+    }
+
+    private fun initView() {
+        binding.btnAdd.setOnClickListener {
             activity?.let {
-                it.supportFragmentManager.beginTransaction()
-                    .replace(R.id.mainContainer, NewConceptVehicleFragment())
-                    .addToBackStack("NewConceptVehicleFragment")
-                    .commit()
+                val fragment = NewConceptVehicleFragment()
+                fragment.arguments = Bundle().apply {
+                    putString("matricula", matricula)
+                }
+                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
+                    .addToBackStack("NewConceptVehicleFragment").commit()
             }
         }
+
+        binding.conceptsRV.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireActivity())
+            adapter = conceptAdapter
+        }
+
     }
+
+    private fun observeEvents() {
+        activity?.let {
+            viewModel.allConcepts.observe(it, Observer { list ->
+                list?.let {
+                    // updates the list.
+                    conceptAdapter.updateList(it)
+                }
+            })
+        }
+
+    }
+
+    private fun clearConcept() {
+        val dialog = activity?.let {
+            AlertDialog.Builder(
+                it,
+                androidx.constraintlayout.widget.R.style.ThemeOverlay_AppCompat_Dialog
+            )
+        }
+        if (dialog != null) {
+            dialog.setTitle("Eliminar Conceptos")
+                .setMessage("¿Esta seguro de querer eliminar todos los conceptos?")
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    viewModel.clearConcepts().also {
+                        Toast.makeText(activity, "Concepto Eliminado", Toast.LENGTH_LONG).show()
+                    }
+                }.setNegativeButton(android.R.string.cancel, null).create().show()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        requireActivity().menuInflater.inflate(R.menu.main_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.clearItem -> clearConcept()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onConceptDeleteIconClick(concepto: Concepto) {
+        viewModel.deleteConcept(concepto)
+        Toast.makeText(requireActivity(), "Concepto Eliminado", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onConceptClick(concepto: Concepto) {
+        // opening a new intent and passing a data to it.
+        activity?.let {
+            val fragment = NewConceptVehicleFragment()
+            fragment.arguments = Bundle().apply {
+                putString("type", "Edit")
+                putString("matricula", matricula)
+                putString("id", concepto.id_concept.toString())
+                putString("concepto", concepto.concepto)
+                putString("fecha", concepto.fecha)
+                if (concepto.kms != null) {
+                    putString("kms", concepto.kms.toString())
+                }
+                if (concepto.precio != null) {
+                    putString("precio", concepto.precio.toString())
+                }
+                putString("taller", concepto.taller)
+                putString("detalles", concepto.detalles)
+                putString("recordar", concepto.recordar.toString())
+                if (concepto.recordar) {
+                    putString("rfecha", concepto.rFecha)
+                    if (concepto.rKms != null) {
+                        putString("rkms", concepto.rKms.toString())
+                    }
+                }
+            }
+            it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
+                .addToBackStack("NewConceptVehicleFragment").commit()
+        }
+    }
+
 }

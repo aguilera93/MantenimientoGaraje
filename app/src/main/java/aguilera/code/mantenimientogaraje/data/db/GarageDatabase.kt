@@ -1,15 +1,17 @@
 package aguilera.code.mantenimientogaraje.data.db
 
+import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Vehiculo::class], version = 1, exportSchema = false)
+@Database(entities = [Vehiculo::class, Concepto::class], version = 1, exportSchema = false)
 abstract class GarageDatabase : RoomDatabase() {
 
     abstract fun getVehiculoDao(): VehiculoDao
+    abstract fun getConceptoDao(): ConceptoDao
 
     companion object {
         // Volatile annotation means any change to this field

@@ -1,10 +1,8 @@
 package aguilera.code.mantenimientogaraje
 
 import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
-import aguilera.code.mantenimientogaraje.data.ui.VehicleViewModel
-import aguilera.code.mantenimientogaraje.databinding.FragmentNewConceptVehicleBinding
+import aguilera.code.mantenimientogaraje.data.ui.GarageViewModel
 import aguilera.code.mantenimientogaraje.databinding.FragmentNewVehicleBinding
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,8 +15,8 @@ class NewVehicleFragment : Fragment() {
 
     private var _binding: FragmentNewVehicleBinding? = null
     private val binding get() = _binding!!
-    lateinit var viewModal: VehicleViewModel
-    var eventID = -1
+
+    lateinit var viewModal: GarageViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,7 +29,7 @@ class NewVehicleFragment : Fragment() {
         viewModal = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication())
-        ).get(VehicleViewModel::class.java)
+        ).get(GarageViewModel::class.java)
 
         return binding.root
     }
