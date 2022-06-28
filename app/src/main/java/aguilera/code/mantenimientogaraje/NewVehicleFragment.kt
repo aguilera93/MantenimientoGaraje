@@ -18,6 +18,8 @@ class NewVehicleFragment : Fragment() {
 
     lateinit var viewModal: GarageViewModel
 
+    var edit: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,11 +44,23 @@ class NewVehicleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // getting data passed via an intent.
         val type = arguments?.getString("type")
-        if (type.equals("Edit")) {
-            // setting data to edit text.
+        if (type == "Edit") edit = true
 
+        setValues(type)
+
+        // adding click listener to our save button.
+        binding.btnSave.setOnClickListener {
+            saveValues(type)
+            activity?.supportFragmentManager?.popBackStack()
+        }
+
+        changeFragmentActionBar()
+    }
+
+    fun setValues(type: String?) {
+
+        if (edit) {
             binding.etMatricula.setText(arguments?.getString("matricula"))
             binding.etMarca.setText(arguments?.getString("marca"))
             binding.etModelo.setText(arguments?.getString("modelo"))
@@ -57,40 +71,44 @@ class NewVehicleFragment : Fragment() {
         } else {
             binding.btnSave.setText("Save Vehicle")
         }
+    }
 
-        // adding click listener to our save button.
-        binding.btnSave.setOnClickListener {
+    fun saveValues(type: String?) {
+        val matricula = binding.etMatricula.text.toString().uppercase()
+        val marca = binding.etMarca.text.toString()
+        val modelo = binding.etModelo.text.toString()
+        val kms = binding.etKMSV.text.toString().toIntOrNull()
+        val vin = binding.etVIN.text.toString()
+        val detalles = binding.etDetallesV.text.toString()
 
-            // getting title and desc from edit text.
-            val matricula = binding.etMatricula.text.toString()
-            val marca = binding.etMarca.text.toString()
-            val modelo = binding.etModelo.text.toString()
-            val kms = binding.etKMSV.text.toString().toIntOrNull()
-            val vin = binding.etVIN.text.toString()
-            val detalles = binding.etDetallesV.text.toString()
+        val vehiculo = Vehiculo(matricula, marca, modelo, kms, vin, detalles)
+        // checking the type and then saving or updating the data.
+        if (edit) {
 
-            val vehiculo = Vehiculo(matricula, marca, modelo, kms, vin, detalles)
-            // checking the type and then saving or updating the data.
-            if (type.equals("Edit")) {
-
-                if (matricula.isNotEmpty()) {
-                    binding.etMatriculaLay.error = null
-                    viewModal.updateVehicle(vehiculo)
-                    Toast.makeText(requireActivity(), "Vehiculo Modificado", Toast.LENGTH_LONG).show()
-                }
-            } else {
-                if (matricula.isNotEmpty()) {
-                    binding.etMatriculaLay.error = null
-                    // if the string is not empty we are calling
-                    // add event method to add data to our room database.
-                    //why id null? because id is auto generate
-                    viewModal.insertVehicle(vehiculo)
-                    Toast.makeText(requireActivity(), "Vehiculo Añadido", Toast.LENGTH_LONG).show()
-                } else {
-                    binding.etMatriculaLay.error = "Debe introducir una matricula valida"
-                }
+            if (matricula.isNotEmpty()) {
+                binding.etMatriculaLay.error = null
+                viewModal.updateVehicle(vehiculo)
+                Toast.makeText(requireActivity(), "Vehiculo Modificado", Toast.LENGTH_LONG).show()
             }
-            activity?.supportFragmentManager?.popBackStack()
+        } else {
+            if (matricula.isNotEmpty()) {
+                binding.etMatriculaLay.error = null
+                // if the string is not empty we are calling
+                // add event method to add data to our room database.
+                //why id null? because id is auto generate
+                viewModal.insertVehicle(vehiculo)
+                Toast.makeText(requireActivity(), "Vehiculo Añadido", Toast.LENGTH_LONG).show()
+            } else {
+                binding.etMatriculaLay.error = "Debe introducir una matricula valida"
+            }
+        }
+    }
+
+    fun changeFragmentActionBar(){
+        if (edit) {
+            (activity as MainActivity).changeActionBar("Modificar Vehiculo", "${binding.etMatricula.text.toString()}")
+        } else {
+            (activity as MainActivity).changeActionBar("Añadir Vehiculo", "")
         }
     }
 }

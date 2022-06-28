@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -43,6 +44,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
 
         initView()
         observeEvents()
+        changeFragmentActionBar()
 
     }
 
@@ -73,7 +75,6 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
                 }
             })
         }
-
     }
 
     private fun clearVehicle() {
@@ -116,9 +117,16 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
             val fragment = ShowVehicleFragment()
             fragment.arguments = Bundle().apply {
                 putString("matricula", vehiculo.matricula)
+                putString("marca", vehiculo.marca)
+                putString("modelo", vehiculo.modelo)
+                //putString("kms", vehiculo.kms)
             }
             it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                 .addToBackStack("ShowVehicleFragment").commit()
         }
+    }
+
+    fun changeFragmentActionBar(){
+        (activity as MainActivity).changeActionBar("Listado de Vehiculos","")
     }
 }

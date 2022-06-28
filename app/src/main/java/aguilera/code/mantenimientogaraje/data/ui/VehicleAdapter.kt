@@ -23,8 +23,8 @@ class VehicleAdapter(
 
     override fun onBindViewHolder(holder: VehicleViewHolder, position: Int) {
         // sets data to item of recycler view.
-        holder.binding.tvTitle.text = allVehicles.get(position).matricula
-        holder.binding.tvDescription.text = allVehicles.get(position).detalles
+        holder.binding.tvTitle.text = "${allVehicles.get(position).marca} ${allVehicles.get(position).modelo}"
+        holder.binding.tvDescription.text = "${allVehicles.get(position).matricula}"
 
         // adding click listener to our delete image view icon.
         holder.binding.imgDelete.setOnClickListener {

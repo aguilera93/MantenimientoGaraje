@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +23,8 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
     private val binding get() = _binding!!
 
     var matricula = ""
+    var marca = ""
+    var modelo = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,8 +43,6 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        matricula = arguments?.getString("matricula").toString()
-
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication())
@@ -51,9 +52,16 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
 
         initView()
         observeEvents()
+        changeFragmentActionBar()
+
     }
 
     private fun initView() {
+
+        matricula = arguments?.getString("matricula").toString()
+        marca = arguments?.getString("marca").toString()
+        modelo = arguments?.getString("modelo").toString()
+
         binding.btnAdd.setOnClickListener {
             activity?.let {
                 val fragment = NewConceptVehicleFragment()
@@ -78,7 +86,8 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
             viewModel.allConcepts.observe(it, Observer { list ->
                 list?.let {
                     // updates the list.
-                    conceptAdapter.updateList(it)
+                    //conceptAdapter.updateList(it)
+                    conceptAdapter.updateList(it.filter { it.matricula == matricula })
                 }
             })
         }
@@ -150,4 +159,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
         }
     }
 
+    fun changeFragmentActionBar() {
+        (activity as MainActivity).changeActionBar("$marca $modelo", "$matricula")
+    }
 }

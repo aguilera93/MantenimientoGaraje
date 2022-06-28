@@ -16,4 +16,11 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.mainContainer, MainFragment())
             .commit()
     }
+
+    fun changeActionBar(title: String, subtitle: String){
+        supportActionBar?.setTitle("$title")
+        supportActionBar?.setSubtitle("$subtitle")
+    }
+
 }
+

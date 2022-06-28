@@ -20,12 +20,12 @@ class GarageViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-
     val allVehicles: LiveData<List<Vehiculo>>
     val repositoryV: VehicleRepository
 
     val allConcepts: LiveData<List<Concepto>>
     val repositoryC: ConceptRepository
+
 
     // initialize dao, repository and all events
     init {
