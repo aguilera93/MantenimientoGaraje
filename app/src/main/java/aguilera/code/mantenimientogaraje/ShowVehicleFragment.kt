@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import java.text.SimpleDateFormat
 
 class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIconClickInterface {
 
@@ -84,10 +85,11 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
     private fun observeEvents() {
         activity?.let {
             viewModel.allConcepts.observe(it, Observer { list ->
-                list?.let {
+                list?.let { listado ->
                     // updates the list.
                     //conceptAdapter.updateList(it)
-                    conceptAdapter.updateList(it.filter { it.matricula == matricula })
+
+                    conceptAdapter.updateList(listado.filter { it.matricula == matricula && it.visible })
                 }
             })
         }
@@ -112,17 +114,6 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        requireActivity().menuInflater.inflate(R.menu.main_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.clearItem -> clearConcept()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onConceptDeleteIconClick(concepto: Concepto) {
         viewModel.deleteConcept(concepto)
         Toast.makeText(requireActivity(), "Concepto Eliminado", Toast.LENGTH_LONG).show()
@@ -135,7 +126,8 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
             fragment.arguments = Bundle().apply {
                 putString("type", "Edit")
                 putString("matricula", matricula)
-                putString("id", concepto.id_concept.toString())
+                putSerializable("concept", concepto as Concepto)
+                /*putString("id", concepto.id_concept.toString())
                 putString("concepto", concepto.concepto)
                 putString("fecha", concepto.fecha)
                 if (concepto.kms != null) {
@@ -152,7 +144,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
                     if (concepto.rKms != null) {
                         putString("rkms", concepto.rKms.toString())
                     }
-                }
+                }*/
             }
             it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                 .addToBackStack("NewConceptVehicleFragment").commit()

@@ -26,7 +26,7 @@ class ConceptAdapter(
     override fun onBindViewHolder(holder: ConceptViewHolder, position: Int) {
         // sets data to item of recycler view.
         holder.binding.tvTitle.text = allConcepts.get(position).concepto
-        holder.binding.tvDescription.text = allConcepts.get(position).detalles
+        holder.binding.tvDescription.text = "${allConcepts.get(position).fecha}"
 
         // adding click listener to our delete image view icon.
         holder.binding.imgDelete.setOnClickListener {

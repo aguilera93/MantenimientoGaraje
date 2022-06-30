@@ -21,7 +21,7 @@ data class Concepto(
     var concepto: String,
 
     @ColumnInfo(name = "fecha")
-    var fecha: String?,
+    var fecha: String,
 
     @ColumnInfo(name = "kms")
     var kms: Int?,
@@ -42,5 +42,8 @@ data class Concepto(
     var rFecha: String?,
 
     @ColumnInfo(name = "rkms")
-    var rKms: Int? = null
-)
+    var rKms: Int? = null,
+
+    @ColumnInfo(name = "visible")
+    var visible: Boolean = true
+): Serializable

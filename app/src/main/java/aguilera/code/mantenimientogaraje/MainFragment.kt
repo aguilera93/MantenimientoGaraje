@@ -95,17 +95,6 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        requireActivity().menuInflater.inflate(R.menu.main_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.clearItem -> clearVehicle()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onVehicleDeleteIconClick(vehiculo: Vehiculo) {
         viewModel.deleteVehicle(vehiculo)
         Toast.makeText(requireActivity(), "Vehiculo Eliminado", Toast.LENGTH_LONG).show()
@@ -119,7 +108,6 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
                 putString("matricula", vehiculo.matricula)
                 putString("marca", vehiculo.marca)
                 putString("modelo", vehiculo.modelo)
-                //putString("kms", vehiculo.kms)
             }
             it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                 .addToBackStack("ShowVehicleFragment").commit()

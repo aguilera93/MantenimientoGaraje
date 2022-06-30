@@ -1,19 +1,18 @@
 package aguilera.code.mantenimientogaraje
 
 import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
-import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
 import aguilera.code.mantenimientogaraje.data.ui.GarageViewModel
-import aguilera.code.mantenimientogaraje.databinding.FragmentMainBinding
 import aguilera.code.mantenimientogaraje.databinding.FragmentNewConceptVehicleBinding
-import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 class NewConceptVehicleFragment : Fragment() {
 
@@ -25,6 +24,10 @@ class NewConceptVehicleFragment : Fragment() {
 
     var matricula: String? = ""
     var edit: Boolean = false
+
+    lateinit var oldConcept: Concepto
+
+    val format = SimpleDateFormat("DD/MM/YYYY")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,13 +56,22 @@ class NewConceptVehicleFragment : Fragment() {
         matricula = arguments?.getString("matricula")
 
         val type = arguments?.getString("type")
-        if (type == "Edit") edit = true
+
+        if (type == "Edit") {
+            edit = true
+
+            oldConcept = arguments?.getSerializable("concept") as Concepto
+
+            eventID = oldConcept.id_concept
+        }
 
         setValues(type)
 
         // adding click listener to our save button.
         binding.btnSave.setOnClickListener {
+
             saveValues(type)
+
             activity?.supportFragmentManager?.popBackStack()
         }
 
@@ -70,16 +82,16 @@ class NewConceptVehicleFragment : Fragment() {
     fun setValues(type: String?) {
         if (edit) {
             // setting data to edit text.
-            binding.etConcepto.setText(arguments?.getString("concepto"))
+            binding.etConcepto.setText(oldConcept.concepto)
             eventID = arguments?.getString("id").toString().toIntOrNull()
-            binding.etFecha.setText(arguments?.getString("fecha"))
-            binding.etPrecio.setText(arguments?.getString("precio"))
-            binding.etKMSC.setText(arguments?.getString("kms"))
-            binding.etTaller.setText(arguments?.getString("taller"))
-            binding.etDetallesC.setText(arguments?.getString("detalles"))
-            binding.cbRecordar.setText(arguments?.getString("recordar"))
-            binding.etRFecha.setText(arguments?.getString("rfecha"))
-            binding.etRKMS.setText(arguments?.getString("rkms"))
+            binding.etFecha.setText(oldConcept.fecha)
+            binding.etPrecio.setText(oldConcept.precio.toString())
+            binding.etKMSC.setText(oldConcept.kms.toString())
+            binding.etTaller.setText(oldConcept.taller)
+            binding.etDetallesC.setText(oldConcept.detalles)
+            binding.cbRecordar.isChecked = oldConcept.recordar
+            binding.etRFecha.setText(oldConcept.rFecha)
+            binding.etRKMS.setText(oldConcept.rKms.toString())
             binding.btnSave.setText("Update Concept")
         } else {
             binding.btnSave.setText("Save Concept")
@@ -96,6 +108,14 @@ class NewConceptVehicleFragment : Fragment() {
         val recordar = binding.cbRecordar.text.toString().toBoolean()
         val rfecha = binding.etRFecha.text.toString()
         val rkms = binding.etRKMS.text.toString().toIntOrNull()
+        var visible = true
+        if (edit) {
+            visible = format.parse(oldConcept.fecha) < format.parse(fecha)
+        }
+
+        Log.i("miapp", "${format.parse(oldConcept.fecha)}")
+        Log.i("miapp", "${format.parse(fecha)}")
+        Log.i("miapp", "$visible")
 
         val concept = matricula?.let { it1 ->
             Concepto(
@@ -109,7 +129,8 @@ class NewConceptVehicleFragment : Fragment() {
                 detalles,
                 recordar,
                 rfecha,
-                rkms
+                rkms,
+                visible
             )
         }
         // checking the type and then saving or updating the data.
@@ -118,7 +139,14 @@ class NewConceptVehicleFragment : Fragment() {
             if (concepto.isNotEmpty()) {
                 binding.etConcepto.error = null
                 if (concept != null) {
-                    viewModal.updateConcept(concept)
+                    if (visible) {
+                        concept.id_concept = null
+                        viewModal.insertConcept(concept)
+                        oldConcept.visible = false
+                        viewModal.updateConcept(oldConcept)
+                    } else {
+                        viewModal.updateConcept(concept)
+                    }
                 }
                 Toast.makeText(requireActivity(), "Concepto Modificado", Toast.LENGTH_LONG)
                     .show()
