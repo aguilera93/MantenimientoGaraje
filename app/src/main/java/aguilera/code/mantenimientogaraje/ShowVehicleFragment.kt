@@ -88,8 +88,11 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
                 list?.let { listado ->
                     // updates the list.
                     //conceptAdapter.updateList(it)
-
+                    //Filtrado segun matricula y muestra solo ultimo registro del concepto
                     conceptAdapter.updateList(listado.filter { it.matricula == matricula && it.visible })
+                    /*listado.forEach {
+                        Log.i("miapp", "${it.toString()}")
+                    }*/
                 }
             })
         }
@@ -127,24 +130,6 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
                 putString("type", "Edit")
                 putString("matricula", matricula)
                 putSerializable("concept", concepto as Concepto)
-                /*putString("id", concepto.id_concept.toString())
-                putString("concepto", concepto.concepto)
-                putString("fecha", concepto.fecha)
-                if (concepto.kms != null) {
-                    putString("kms", concepto.kms.toString())
-                }
-                if (concepto.precio != null) {
-                    putString("precio", concepto.precio.toString())
-                }
-                putString("taller", concepto.taller)
-                putString("detalles", concepto.detalles)
-                putString("recordar", concepto.recordar.toString())
-                if (concepto.recordar) {
-                    putString("rfecha", concepto.rFecha)
-                    if (concepto.rKms != null) {
-                        putString("rkms", concepto.rKms.toString())
-                    }
-                }*/
             }
             it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                 .addToBackStack("NewConceptVehicleFragment").commit()

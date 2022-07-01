@@ -41,9 +41,11 @@ data class Concepto(
     @ColumnInfo(name = "rfecha")
     var rFecha: String?,
 
-    @ColumnInfo(name = "rkms")
-    var rKms: Int? = null,
-
     @ColumnInfo(name = "visible")
     var visible: Boolean = true
-): Serializable
+) : Serializable {
+
+    override fun toString(): String {
+        return "$id_concept, $matricula, $concepto', $fecha', $kms, $precio, $rFecha, $visible"
+    }
+}

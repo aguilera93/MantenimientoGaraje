@@ -114,7 +114,8 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
         }
     }
 
-    fun changeFragmentActionBar(){
-        (activity as MainActivity).changeActionBar("Listado de Vehiculos","")
+    fun changeFragmentActionBar() {
+        (activity as MainActivity).changeActionBar("Listado de Vehiculos", "")
     }
+
 }
