@@ -8,20 +8,27 @@
     android:layout_marginTop="4dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="4dp"
-    app:cardBackgroundColor="@color/teal_700"
-    app:cardCornerRadius="3dp"
+    app:cardBackgroundColor="@color/app"
+    app:cardCornerRadius="10dp"
     app:cardElevation="3dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            tools:ignore="MissingConstraints"
+            android:src="@drawable/ic_key"
+            android:padding="5dp"/>
+
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="85dp"
+            android:layout_marginLeft="85dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
@@ -36,8 +43,8 @@
             android:id="@+id/tvDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="85dp"
+            android:layout_marginLeft="85dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"

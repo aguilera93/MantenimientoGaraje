@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_add.xml" value="0.1575" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_key.xml" value="0.1575" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/activity_add_event.xml" value="0.17119565217391305" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/activity_main.xml" value="0.23999999479814021" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/activity_mostrar_vehiculo.xml" value="0.17119565217391305" />

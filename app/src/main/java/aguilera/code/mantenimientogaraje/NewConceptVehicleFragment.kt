@@ -95,12 +95,14 @@ class NewConceptVehicleFragment : Fragment() {
             binding.etConcepto.keyListener = null
             conceptId = arguments?.getString("id").toString().toIntOrNull()
             binding.etFecha.setText(oldConcept.fecha)
-            binding.etPrecio.setText(oldConcept.precio.toString())
-            binding.etKMSC.setText(oldConcept.kms.toString())
+            Log.i("miapp", "${oldConcept.precio}")
+            binding.etPrecio.setText(if (oldConcept.precio == null) "" else oldConcept.precio.toString())
+            binding.etKMSC.setText(if (oldConcept.kms == null) "" else oldConcept.kms.toString())
             binding.etTaller.setText(oldConcept.taller)
             binding.etDetallesC.setText(oldConcept.detalles)
             binding.cbRecordar.isChecked = oldConcept.recordar
-            oldConcept.rFecha?.let { setRFech(it) }
+            if (oldConcept.rFecha?.isEmpty() == false) oldConcept.rFecha?.let { setRFech(it) }
+
             binding.btnSave.setText("Update Concept")
         } else {
             binding.btnSave.setText("Save Concept")
