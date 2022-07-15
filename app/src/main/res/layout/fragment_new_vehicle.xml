@@ -2,18 +2,26 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/etMatriculaLay"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:hint="MATRICULA"
+        android:textColorHint="@color/white"
+        app:boxBackgroundColor="@color/app"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:errorEnabled="true">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etMatricula"
@@ -24,14 +32,21 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/etMarcaLay"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:hint="MARCA"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        android:textColorHint="@color/white"
+        app:boxBackgroundColor="@color/app"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etMatriculaLay"
-        app:errorEnabled="true">
+        app:layout_constraintTop_toBottomOf="@+id/etMatriculaLay">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etMarca"
@@ -42,14 +57,21 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/etModeloLay"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:hint="MODELO"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        android:textColorHint="@color/white"
+        app:boxBackgroundColor="@color/app"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etMarcaLay"
-        app:errorEnabled="true">
+        app:layout_constraintTop_toBottomOf="@+id/etMarcaLay">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etModelo"
@@ -60,14 +82,21 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/etKMSVLay"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:hint="KMS"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        android:textColorHint="@color/white"
+        app:boxBackgroundColor="@color/app"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etModeloLay"
-        app:errorEnabled="true">
+        app:layout_constraintTop_toBottomOf="@+id/etModeloLay">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etKMSV"
@@ -78,14 +107,21 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/etVINLay"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:hint="VIN"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        android:textColorHint="@color/white"
+        app:boxBackgroundColor="@color/app"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etKMSVLay"
-        app:errorEnabled="true">
+        app:layout_constraintTop_toBottomOf="@+id/etKMSVLay">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etVIN"
@@ -96,14 +132,21 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/etDetallesVLay"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:hint="DETALLES"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        android:textColorHint="@color/white"
+        app:boxBackgroundColor="@color/app"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etVINLay"
-        app:errorEnabled="true">
+        app:layout_constraintTop_toBottomOf="@+id/etVINLay">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etDetallesV"

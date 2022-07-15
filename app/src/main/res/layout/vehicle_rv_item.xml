@@ -17,8 +17,8 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             tools:ignore="MissingConstraints"
             android:src="@drawable/ic_key"
             android:padding="5dp"/>

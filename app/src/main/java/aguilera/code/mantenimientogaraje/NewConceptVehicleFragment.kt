@@ -3,21 +3,28 @@ package aguilera.code.mantenimientogaraje
 import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.ui.GarageViewModel
 import aguilera.code.mantenimientogaraje.databinding.FragmentNewConceptVehicleBinding
+import android.app.DatePickerDialog
+import android.app.DatePickerDialog.OnDateSetListener
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.DatePicker
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import java.text.SimpleDateFormat
+import java.util.*
 
+private var fechConcept = ""
+private var _binding: FragmentNewConceptVehicleBinding? = null
+private val binding get() = _binding!!
 
 class NewConceptVehicleFragment : Fragment() {
-
-    private var _binding: FragmentNewConceptVehicleBinding? = null
-    private val binding get() = _binding!!
 
     lateinit var viewModal: GarageViewModel
     var conceptId: Int? = null
@@ -65,10 +72,9 @@ class NewConceptVehicleFragment : Fragment() {
 
         setValues(type)
 
-        // adding click listener to our save button.
-        binding.btnSave.setOnClickListener {
-            saveValues(type)
-            activity?.supportFragmentManager?.popBackStack()
+        binding.btnFecha.setOnClickListener {
+            val newFragment: DialogFragment = SelectDateFragment()
+            fragmentManager?.let { it1 -> newFragment.show(it1, "DatePicker") }
         }
 
         changeFragmentActionBar()
@@ -77,6 +83,16 @@ class NewConceptVehicleFragment : Fragment() {
 
         binding.cbRecordar.setOnCheckedChangeListener { buttonView, isChecked ->
             binding.dpRDate.visibility = rememberCheck(isChecked)
+        }
+
+        // adding click listener to our save button.
+        binding.btnSave.setOnClickListener {
+            if (binding.btnFecha.text != "FECHA") {
+                saveValues(type)
+            } else {
+                Toast.makeText(requireActivity(), "Debe elegir una fecha valida", Toast.LENGTH_LONG)
+                    .show()
+            }
         }
 
     }
@@ -94,7 +110,7 @@ class NewConceptVehicleFragment : Fragment() {
             binding.etConcepto.setText(oldConcept.concepto)
             binding.etConcepto.keyListener = null
             conceptId = arguments?.getString("id").toString().toIntOrNull()
-            binding.etFecha.setText(oldConcept.fecha)
+            binding.btnFecha.setText(oldConcept.fecha)
             Log.i("miapp", "${oldConcept.precio}")
             binding.etPrecio.setText(if (oldConcept.precio == null) "" else oldConcept.precio.toString())
             binding.etKMSC.setText(if (oldConcept.kms == null) "" else oldConcept.kms.toString())
@@ -103,26 +119,24 @@ class NewConceptVehicleFragment : Fragment() {
             binding.cbRecordar.isChecked = oldConcept.recordar
             if (oldConcept.rFecha?.isEmpty() == false) oldConcept.rFecha?.let { setRFech(it) }
 
-            binding.btnSave.setText("Update Concept")
+            binding.btnSave.setText("Update")
         } else {
-            binding.btnSave.setText("Save Concept")
+            binding.btnSave.setText("Save")
         }
     }
 
     fun saveValues(type: String?) {
         val concepto = binding.etConcepto.text.toString()
-        val fecha = binding.etFecha.text.toString()
+        val fecha = binding.btnFecha.text.toString()
         val precio = binding.etPrecio.text.toString().toFloatOrNull()
         val kms = binding.etKMSC.text.toString().toIntOrNull()
         val taller = binding.etTaller.text.toString()
         val detalles = binding.etDetallesC.text.toString()
         val recordar = binding.cbRecordar.isChecked
-        var rfecha = if (recordar) {
-            getRFech()
-        } else {
-            ""
-        }
+        var rfecha = if (recordar) getRFech() else ""
         var visible = true
+
+        Log.i("miapp", "C: $concepto")
 
         val concept = matricula?.let { it1 ->
             Concepto(
@@ -142,8 +156,7 @@ class NewConceptVehicleFragment : Fragment() {
 
         // checking the type and then saving or updating the data.
         if (edit) {
-
-            if (concepto.isNotEmpty()) {
+            if (concepto != "") {
                 binding.etConcepto.error = null
                 if (concept != null) {
                     if (format.parse(oldConcept.fecha) < format.parse(fecha)) {
@@ -157,18 +170,17 @@ class NewConceptVehicleFragment : Fragment() {
                     }
                     Toast.makeText(requireActivity(), "Concepto Modificado", Toast.LENGTH_LONG)
                         .show()
+                    activity?.supportFragmentManager?.popBackStack()
                 }
             }
         } else {
-            if (concepto.isNotEmpty()) {
+            if (concepto != "") {
                 binding.etConceptoLay.error = null
-                // if the string is not empty we are calling
-                // add event method to add data to our room database.
-                //why id null? because id is auto generate
                 if (concept != null) {
                     viewModal.insertConcept(concept)
                 }
                 Toast.makeText(requireActivity(), "Concepto Añadido", Toast.LENGTH_LONG).show()
+                activity?.supportFragmentManager?.popBackStack()
             } else {
                 binding.etConceptoLay.error = "Debe introducir un concepto valido"
             }
@@ -204,5 +216,25 @@ class NewConceptVehicleFragment : Fragment() {
         fecha = fecha.substring(fecha.indexOf("/") + 1)
         val year: Int = fecha.toInt()
         binding.dpRDate.updateDate(year, month, day)
+    }
+}
+
+class SelectDateFragment : DialogFragment(),
+    OnDateSetListener {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val calendar: Calendar = Calendar.getInstance()
+        val yy: Int = calendar.get(Calendar.YEAR)
+        val mm: Int = calendar.get(Calendar.MONTH)
+        val dd: Int = calendar.get(Calendar.DAY_OF_MONTH)
+        return DatePickerDialog(requireActivity(), this, yy, mm, dd)
+    }
+
+    override fun onDateSet(view: DatePicker, yy: Int, mm: Int, dd: Int) {
+        populateSetDate(yy, mm + 1, dd)
+    }
+
+    fun populateSetDate(year: Int, month: Int, day: Int) {
+        fechConcept = "$day/$month/$year"
+        binding.btnFecha.setText(fechConcept)
     }
 }

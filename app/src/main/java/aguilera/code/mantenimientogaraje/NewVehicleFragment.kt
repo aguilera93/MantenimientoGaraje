@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 
 class NewVehicleFragment : Fragment() {
@@ -67,9 +68,9 @@ class NewVehicleFragment : Fragment() {
             binding.etKMSV.setText(arguments?.getString("kms"))
             binding.etVIN.setText(arguments?.getString("vin"))
             binding.etDetallesV.setText(arguments?.getString("detalles"))
-            binding.btnSave.setText("Update Vehicle")
+            binding.btnSave.setText("Update")
         } else {
-            binding.btnSave.setText("Save Vehicle")
+            binding.btnSave.setText("Save")
         }
     }
 
