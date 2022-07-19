@@ -6,36 +6,36 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class ConceptAdapter(
-    val conceptDeleteIconClickInterface: ConceptDeleteIconClickInterface,
-    val conceptClickInterface: ConceptClickInterface
-) : RecyclerView.Adapter<ConceptViewHolder>() {
+class ConceptHistoryAdapter(
+    val conceptHistoryDeleteIconClickInterface: ConceptHistoryDeleteIconClickInterface,
+    val conceptHistoryClickInterface: ConceptHistoryClickInterface
+) : RecyclerView.Adapter<ConceptHistoryViewHolder>() {
 
     private val allConcepts = ArrayList<Concepto>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConceptViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConceptHistoryViewHolder {
 
         val inflater = LayoutInflater.from(parent.context)
 
         val binding = ConceptRvItemBinding.inflate(inflater, parent, false)
-        return ConceptViewHolder(binding)
+        return ConceptHistoryViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ConceptViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ConceptHistoryViewHolder, position: Int) {
         // sets data to item of recycler view.
-        holder.binding.tvTitle.text = "${allConcepts.get(position).concepto}"
+        holder.binding.tvTitle.text = "${allConcepts.get(position).detalles}"
         holder.binding.tvDescription.text = "${allConcepts.get(position).fecha}"
 
         // adding click listener to our delete image view icon.
         holder.binding.imgDelete.setOnClickListener {
             // call eventDeleteIconClickInterface.onEventDeleteIconClick() and pass position to it.
-            conceptDeleteIconClickInterface.onConceptDeleteIconClick(allConcepts.get(position))
+            conceptHistoryDeleteIconClickInterface.onConceptDeleteIconClick(allConcepts.get(position))
         }
 
         // adding click listener to our recycler view item.
         holder.itemView.setOnClickListener {
             // call eventClickInterface.onEventClick() and pass position to it.
-            conceptClickInterface.onConceptClick(allConcepts.get(position))
+            conceptHistoryClickInterface.onConceptClick(allConcepts.get(position))
         }
     }
 
@@ -58,17 +58,17 @@ class ConceptAdapter(
     }
 }
 
-interface ConceptDeleteIconClickInterface {
+interface ConceptHistoryDeleteIconClickInterface {
     // creating a method for click
     // action on delete image view.
     fun onConceptDeleteIconClick(concepto: Concepto)
 }
 
-interface ConceptClickInterface {
+interface ConceptHistoryClickInterface {
     // creating a method for click action
     // on recycler view item for updating it.
     fun onConceptClick(concepto: Concepto)
 }
 
-class ConceptViewHolder(val binding: ConceptRvItemBinding) :
+class ConceptHistoryViewHolder(val binding: ConceptRvItemBinding) :
     RecyclerView.ViewHolder(binding.root) {}

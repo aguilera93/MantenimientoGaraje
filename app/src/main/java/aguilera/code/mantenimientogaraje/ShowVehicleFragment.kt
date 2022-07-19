@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import java.text.SimpleDateFormat
+import java.util.Locale.filter
 
 class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIconClickInterface {
 
@@ -44,7 +45,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as AppCompatActivity?)!!.supportActionBar!!.show()
+        //(activity as AppCompatActivity?)!!.supportActionBar!!.show()
 
         viewModel = ViewModelProvider(
             this,
@@ -104,37 +105,16 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
                     // updates the list.
                     //conceptAdapter.updateList(it)
                     //Filtrado segun matricula y muestra solo ultimo registro del concepto
-                    conceptAdapter.updateList(listado.filter { it.matricula == matricula && it.visible })
-                    /*listado.forEach {
-                        Log.i("miapp", "${it.toString()}")
-                    }*/
+                    conceptAdapter.updateList(listado.sortedBy { it.fecha }.filter { it.matricula == matricula && it.visible })
                 }
             })
         }
 
     }
 
-    private fun clearConcept() {
-        val dialog = activity?.let {
-            AlertDialog.Builder(
-                it,
-                androidx.constraintlayout.widget.R.style.ThemeOverlay_AppCompat_Dialog
-            )
-        }
-        if (dialog != null) {
-            dialog.setTitle("Eliminar Conceptos")
-                .setMessage("¿Esta seguro de querer eliminar todos los conceptos?")
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    viewModel.clearConcepts().also {
-                        Toast.makeText(activity, "Concepto Eliminado", Toast.LENGTH_LONG).show()
-                    }
-                }.setNegativeButton(android.R.string.cancel, null).create().show()
-        }
-    }
-
     override fun onConceptDeleteIconClick(concepto: Concepto) {
         viewModel.deleteConcept(concepto)
-        Toast.makeText(requireActivity(), "Concepto Eliminado", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Concepto Eliminado", Toast.LENGTH_LONG).show()
     }
 
     override fun onConceptClick(concepto: Concepto) {

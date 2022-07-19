@@ -11,7 +11,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="CONCEPTO"
+        android:hint="Historico"
         android:textColorHint="@color/white"
         app:hintTextColor="@color/app_dark"
         app:boxBackgroundColor="@color/app"

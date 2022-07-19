@@ -18,6 +18,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 private var fechConcept = ""
@@ -34,7 +36,7 @@ class NewConceptVehicleFragment : Fragment() {
 
     lateinit var oldConcept: Concepto
 
-    val format = SimpleDateFormat("DD/MM/YYYY")
+    val format = SimpleDateFormat("dd/mm/yyyy")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,19 +60,9 @@ class NewConceptVehicleFragment : Fragment() {
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication())
         ).get(GarageViewModel::class.java)
 
-        matricula = arguments?.getString("matricula")
+        getValues()
 
-        val type = arguments?.getString("type")
-
-        if (type == "Edit") {
-            edit = true
-
-            oldConcept = arguments?.getSerializable("concept") as Concepto
-
-            conceptId = oldConcept.id_concept
-        }
-
-        setValues(type)
+        setValues()
 
         binding.btnFecha.setOnClickListener {
             val newFragment: DialogFragment = SelectDateFragment()
@@ -88,13 +80,23 @@ class NewConceptVehicleFragment : Fragment() {
         // adding click listener to our save button.
         binding.btnSave.setOnClickListener {
             if (binding.btnFecha.text != "FECHA") {
-                saveValues(type)
+                saveValues()
             } else {
-                Toast.makeText(requireActivity(), "Debe elegir una fecha valida", Toast.LENGTH_LONG)
+                Toast.makeText(context, "Debe elegir una fecha valida", Toast.LENGTH_LONG)
                     .show()
             }
         }
 
+    }
+
+    fun getValues() {
+        matricula = arguments?.getString("matricula")
+
+        if (arguments?.getString("type") == "Edit") {
+            edit = true
+            oldConcept = arguments?.getSerializable("concept") as Concepto
+            conceptId = oldConcept.id_concept
+        }
     }
 
     fun rememberCheck(checked: Boolean): Int {
@@ -104,82 +106,69 @@ class NewConceptVehicleFragment : Fragment() {
         return View.INVISIBLE
     }
 
-    fun setValues(type: String?) {
+    fun setValues() {
         if (edit) {
-            // setting data to edit text.
+            // setting data.
             binding.etConcepto.setText(oldConcept.concepto)
+            // Para no poder editar el nombre del concepto
             binding.etConcepto.keyListener = null
-            conceptId = arguments?.getString("id").toString().toIntOrNull()
+            //conceptId = arguments?.getString("id").toString().toIntOrNull()
             binding.btnFecha.setText(oldConcept.fecha)
-            Log.i("miapp", "${oldConcept.precio}")
             binding.etPrecio.setText(if (oldConcept.precio == null) "" else oldConcept.precio.toString())
             binding.etKMSC.setText(if (oldConcept.kms == null) "" else oldConcept.kms.toString())
             binding.etTaller.setText(oldConcept.taller)
             binding.etDetallesC.setText(oldConcept.detalles)
             binding.cbRecordar.isChecked = oldConcept.recordar
             if (oldConcept.rFecha?.isEmpty() == false) oldConcept.rFecha?.let { setRFech(it) }
-
             binding.btnSave.setText("Update")
         } else {
             binding.btnSave.setText("Save")
         }
     }
 
-    fun saveValues(type: String?) {
-        val concepto = binding.etConcepto.text.toString()
-        val fecha = binding.btnFecha.text.toString()
-        val precio = binding.etPrecio.text.toString().toFloatOrNull()
-        val kms = binding.etKMSC.text.toString().toIntOrNull()
-        val taller = binding.etTaller.text.toString()
-        val detalles = binding.etDetallesC.text.toString()
-        val recordar = binding.cbRecordar.isChecked
-        var rfecha = if (recordar) getRFech() else ""
-        var visible = true
-
-        Log.i("miapp", "C: $concepto")
-
+    fun saveValues() {
         val concept = matricula?.let { it1 ->
             Concepto(
                 conceptId,
                 it1,
-                concepto,
-                fecha,
-                kms,
-                precio,
-                taller,
-                detalles,
-                recordar,
-                rfecha,
-                visible
+                binding.etConcepto.text.toString(),
+                binding.btnFecha.text.toString(),
+                binding.etKMSC.text.toString().toIntOrNull(),
+                binding.etPrecio.text.toString().toFloatOrNull(),
+                binding.etTaller.text.toString(),
+                binding.etDetallesC.text.toString(),
+                binding.cbRecordar.isChecked,
+                if (binding.cbRecordar.isChecked) getRFech() else "",
+                true
             )
         }
 
         // checking the type and then saving or updating the data.
         if (edit) {
-            if (concepto != "") {
+            if (concept?.concepto != "") {
                 binding.etConcepto.error = null
                 if (concept != null) {
-                    if (format.parse(oldConcept.fecha) < format.parse(fecha)) {
+                    if (compareFech(oldConcept.fecha, concept.fecha)) {
                         concept.id_concept = null
                         viewModal.insertConcept(concept)
                         oldConcept.visible = false
                         viewModal.updateConcept(oldConcept)
                     } else {
-                        concept.id_concept = oldConcept.id_concept
+                        concept.fecha = oldConcept.fecha
                         viewModal.updateConcept(concept)
                     }
-                    Toast.makeText(requireActivity(), "Concepto Modificado", Toast.LENGTH_LONG)
+                    Toast.makeText(context, "Concepto Modificado", Toast.LENGTH_LONG)
                         .show()
                     activity?.supportFragmentManager?.popBackStack()
                 }
             }
         } else {
-            if (concepto != "") {
+            if (concept?.concepto != "") {
                 binding.etConceptoLay.error = null
                 if (concept != null) {
                     viewModal.insertConcept(concept)
                 }
-                Toast.makeText(requireActivity(), "Concepto Añadido", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Concepto Añadido", Toast.LENGTH_LONG).show()
                 activity?.supportFragmentManager?.popBackStack()
             } else {
                 binding.etConceptoLay.error = "Debe introducir un concepto valido"
@@ -217,6 +206,27 @@ class NewConceptVehicleFragment : Fragment() {
         val year: Int = fecha.toInt()
         binding.dpRDate.updateDate(year, month, day)
     }
+
+    fun compareFech(oldFech: String, newFech: String): Boolean {
+        var f1 = oldFech
+        var f2 = newFech
+        val d1: Int = f1.substring(0, f1.indexOf("/")).toInt()
+        val d2: Int = f2.substring(0, f2.indexOf("/")).toInt()
+        f1 = f1.substring(f1.indexOf("/") + 1)
+        f2 = f2.substring(f2.indexOf("/") + 1)
+        val m1: Int = f1.substring(0, f1.indexOf("/")).toInt()
+        val m2: Int = f2.substring(0, f2.indexOf("/")).toInt()
+        f1 = f1.substring(f1.indexOf("/") + 1)
+        f2 = f2.substring(f2.indexOf("/") + 1)
+        val y1: Int = f1.toInt()
+        val y2: Int = f2.toInt()
+
+        var sumF1 = y1 + m1 + d1
+        var sumF2 = y2 + m2 + d2
+
+        return (sumF1 < sumF2)
+    }
+
 }
 
 class SelectDateFragment : DialogFragment(),

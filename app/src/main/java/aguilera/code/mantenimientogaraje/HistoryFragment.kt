@@ -1,11 +1,10 @@
 package aguilera.code.mantenimientogaraje
 
 import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
-import aguilera.code.mantenimientogaraje.data.ui.ConceptAdapter
-import aguilera.code.mantenimientogaraje.data.ui.ConceptClickInterface
-import aguilera.code.mantenimientogaraje.data.ui.ConceptDeleteIconClickInterface
-import aguilera.code.mantenimientogaraje.data.ui.GarageViewModel
+import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentHistoryBinding
+import android.app.Activity
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,17 +13,16 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 
-
-class HistoryFragment : Fragment(), ConceptClickInterface, ConceptDeleteIconClickInterface {
+class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
+    ConceptHistoryDeleteIconClickInterface {
 
     private lateinit var viewModel: GarageViewModel
-    private lateinit var conceptAdapter: ConceptAdapter
+    private lateinit var conceptHistoryAdapter: ConceptHistoryAdapter
 
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
@@ -50,18 +48,18 @@ class HistoryFragment : Fragment(), ConceptClickInterface, ConceptDeleteIconClic
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
+        //(activity as AppCompatActivity?)!!.supportActionBar!!.hide()
 
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication())
         ).get(GarageViewModel::class.java)
 
-        conceptAdapter = ConceptAdapter(this, this)
+        conceptHistoryAdapter = ConceptHistoryAdapter(this, this)
 
         initView()
         observeEvents()
-        //changeFragmentActionBar()
+        changeFragmentActionBar()
 
     }
 
@@ -71,12 +69,10 @@ class HistoryFragment : Fragment(), ConceptClickInterface, ConceptDeleteIconClic
         marca = arguments?.getString("marca").toString()
         modelo = arguments?.getString("modelo").toString()
 
-        binding.menuL.hint = "Historico - $marca $modelo - $matricula"
-
         binding.conceptsRV.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireActivity())
-            adapter = conceptAdapter
+            adapter = conceptHistoryAdapter
         }
 
     }
@@ -87,19 +83,21 @@ class HistoryFragment : Fragment(), ConceptClickInterface, ConceptDeleteIconClic
                 list?.let { listado ->
                     // updates the list.
                     val listConcept = arrayListOf<String>()
-                    listado.filter { it.matricula == matricula && it.visible }.forEach { c ->
-                        listConcept.add(c.concepto)
-                    }
-                    val adapter = ArrayAdapter(requireActivity(), R.layout.list_item, listConcept)
+                    listado.sortedBy { it.concepto }
+                        .filter { it.matricula == matricula && it.visible }
+                        .forEach { c ->
+                            listConcept.add(c.concepto)
+                        }
+                    val adapter =
+                        context?.let { it1 -> ArrayAdapter(it1, R.layout.list_item, listConcept) }
                     binding.menu.setAdapter(adapter)
 
                     binding.menu.setOnItemClickListener { adapterView, view, i, l ->
-                        conceptAdapter.updateList(listado.filter {
+                        conceptHistoryAdapter.updateList(listado.sortedBy { it.fecha }.filter {
                             it.matricula == matricula && it.concepto == listConcept.get(
                                 i
                             )
                         })
-                        Log.i("miapp", "${listConcept.get(i)}")
                     }
                 }
             })
@@ -107,45 +105,46 @@ class HistoryFragment : Fragment(), ConceptClickInterface, ConceptDeleteIconClic
 
     }
 
-    private fun clearConcept() {
-        val dialog = activity?.let {
-            AlertDialog.Builder(
-                it,
-                androidx.constraintlayout.widget.R.style.ThemeOverlay_AppCompat_Dialog
-            )
-        }
-        if (dialog != null) {
-            dialog.setTitle("Eliminar Conceptos")
-                .setMessage("¿Esta seguro de querer eliminar todos los conceptos?")
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    viewModel.clearConcepts().also {
-                        Toast.makeText(activity, "Concepto Eliminado", Toast.LENGTH_LONG).show()
-                    }
-                }.setNegativeButton(android.R.string.cancel, null).create().show()
-        }
-    }
-
     override fun onConceptDeleteIconClick(concepto: Concepto) {
         viewModel.deleteConcept(concepto)
-        Toast.makeText(requireActivity(), "Concepto Eliminado", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Concepto Eliminado", Toast.LENGTH_LONG).show()
     }
 
     override fun onConceptClick(concepto: Concepto) {
-        // opening a new intent and passing a data to it.
-        activity?.let {
-            val fragment = NewConceptVehicleFragment()
-            fragment.arguments = Bundle().apply {
-                putString("type", "Edit")
-                putString("matricula", matricula)
-                putSerializable("concept", concepto as Concepto)
-            }
-            it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
-                .addToBackStack("NewConceptVehicleFragment").commit()
-        }
+        val dialogBuilder = AlertDialog.Builder(requireActivity())
+        var taller = concepto.taller
+        if (taller == "null" || taller?.length == 0) taller = "-"
+
+        var precio = concepto.precio.toString()
+        if (precio == "null" || precio?.length == 0) precio = "-" else precio+="€"
+
+        var detalles = concepto.detalles
+        if (detalles == "null" || detalles?.length == 0) detalles = "-"
+
+        dialogBuilder.setMessage(
+            "Fecha: ${concepto.fecha}\n" +
+                    "Taller: $taller\n" +
+                    "Precio: $precio\n" +
+                    "Detalles: $detalles"
+        )
+        // if the dialog is cancelable
+        /*.setCancelable(false)
+        .setPositiveButton("Ok", DialogInterface.OnClickListener {
+                dialog, id ->
+            dialog.dismiss()
+
+        })*/
+
+        val alert = dialogBuilder.create()
+        alert.setTitle("${concepto.concepto}")
+        alert.show()
+
+        //Toast.makeText(context, "Taller: ${concepto.taller}\n Precio: ${concepto.precio}\n Detalles: ${concepto.detalles}", Toast.LENGTH_LONG).show()
+
     }
 
     fun changeFragmentActionBar() {
-        (activity as MainActivity).changeActionBar("Historico", "")
+        (activity as MainActivity).changeActionBar("$marca $modelo", "$matricula")
     }
 
 }
