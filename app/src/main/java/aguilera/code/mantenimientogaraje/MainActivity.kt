@@ -26,5 +26,9 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setTitle("$title")
         supportActionBar?.setSubtitle("$subtitle")
     }
+
+    fun toast(message: String){
+        Toast.makeText(this, "$message", Toast.LENGTH_LONG).show()
+    }
 }
 

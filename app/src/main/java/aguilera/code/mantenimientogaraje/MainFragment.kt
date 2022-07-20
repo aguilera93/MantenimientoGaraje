@@ -77,27 +77,9 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
         }
     }
 
-    private fun clearVehicle() {
-        val dialog = activity?.let {
-            AlertDialog.Builder(
-                it,
-                androidx.constraintlayout.widget.R.style.ThemeOverlay_AppCompat_Dialog
-            )
-        }
-        if (dialog != null) {
-            dialog.setTitle("Eliminar Vehiculos")
-                .setMessage("¿Esta seguro de querer eliminar todos los vehiculos?")
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    viewModel.clearVehicles().also {
-                        Toast.makeText(activity, "Vehiculo Eliminado", Toast.LENGTH_LONG).show()
-                    }
-                }.setNegativeButton(android.R.string.cancel, null).create().show()
-        }
-    }
-
     override fun onVehicleDeleteIconClick(vehiculo: Vehiculo) {
         viewModel.deleteVehicle(vehiculo)
-        Toast.makeText(requireActivity(), "Vehiculo Eliminado", Toast.LENGTH_LONG).show()
+        (activity as MainActivity).toast("${vehiculo.matricula} Eliminado")
     }
 
     override fun onVehicleClick(vehiculo: Vehiculo) {

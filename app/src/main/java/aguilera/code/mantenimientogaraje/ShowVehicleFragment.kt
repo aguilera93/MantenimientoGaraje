@@ -114,7 +114,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
 
     override fun onConceptDeleteIconClick(concepto: Concepto) {
         viewModel.deleteConcept(concepto)
-        Toast.makeText(context, "Concepto Eliminado", Toast.LENGTH_LONG).show()
+        (activity as MainActivity).toast("${concepto.concepto} Eliminado")
     }
 
     override fun onConceptClick(concepto: Concepto) {

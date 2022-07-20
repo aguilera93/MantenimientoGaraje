@@ -93,7 +93,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                     binding.menu.setAdapter(adapter)
 
                     binding.menu.setOnItemClickListener { adapterView, view, i, l ->
-                        conceptHistoryAdapter.updateList(listado.sortedBy { it.fecha }.filter {
+                        conceptHistoryAdapter.updateList(listado.sortedByDescending { it.fecha }.filter {
                             it.matricula == matricula && it.concepto == listConcept.get(
                                 i
                             )
@@ -107,11 +107,11 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
 
     override fun onConceptDeleteIconClick(concepto: Concepto) {
         viewModel.deleteConcept(concepto)
-        Toast.makeText(context, "Concepto Eliminado", Toast.LENGTH_LONG).show()
+        (activity as MainActivity).toast("${concepto.concepto} Eliminado")
     }
 
     override fun onConceptClick(concepto: Concepto) {
-        val dialogBuilder = AlertDialog.Builder(requireActivity())
+        val dialogBuilder = AlertDialog.Builder(requireContext())
         var taller = concepto.taller
         if (taller == "null" || taller?.length == 0) taller = "-"
 
@@ -138,9 +138,6 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         val alert = dialogBuilder.create()
         alert.setTitle("${concepto.concepto}")
         alert.show()
-
-        //Toast.makeText(context, "Taller: ${concepto.taller}\n Precio: ${concepto.precio}\n Detalles: ${concepto.detalles}", Toast.LENGTH_LONG).show()
-
     }
 
     fun changeFragmentActionBar() {

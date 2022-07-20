@@ -48,18 +48,18 @@ class NewVehicleFragment : Fragment() {
         val type = arguments?.getString("type")
         if (type == "Edit") edit = true
 
-        setValues(type)
+        setValues()
 
         // adding click listener to our save button.
         binding.btnSave.setOnClickListener {
-            saveValues(type)
+            saveValues()
             activity?.supportFragmentManager?.popBackStack()
         }
 
         changeFragmentActionBar()
     }
 
-    fun setValues(type: String?) {
+    fun setValues() {
 
         if (edit) {
             binding.etMatricula.setText(arguments?.getString("matricula"))
@@ -74,7 +74,7 @@ class NewVehicleFragment : Fragment() {
         }
     }
 
-    fun saveValues(type: String?) {
+    fun saveValues() {
         val matricula = binding.etMatricula.text.toString().uppercase()
         val marca = binding.etMarca.text.toString()
         val modelo = binding.etModelo.text.toString()
@@ -89,7 +89,7 @@ class NewVehicleFragment : Fragment() {
             if (matricula.isNotEmpty()) {
                 binding.etMatriculaLay.error = null
                 viewModal.updateVehicle(vehiculo)
-                Toast.makeText(requireActivity(), "Vehiculo Modificado", Toast.LENGTH_LONG).show()
+                (activity as MainActivity).toast("${vehiculo.matricula} Modificado")
             }
         } else {
             if (matricula.isNotEmpty()) {
@@ -98,7 +98,7 @@ class NewVehicleFragment : Fragment() {
                 // add event method to add data to our room database.
                 //why id null? because id is auto generate
                 viewModal.insertVehicle(vehiculo)
-                Toast.makeText(requireActivity(), "Vehiculo Añadido", Toast.LENGTH_LONG).show()
+                (activity as MainActivity).toast("${vehiculo.matricula} Añadido")
             } else {
                 binding.etMatriculaLay.error = "Debe introducir una matricula valida"
             }

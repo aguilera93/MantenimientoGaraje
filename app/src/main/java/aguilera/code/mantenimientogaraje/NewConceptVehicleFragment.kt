@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 
 private var fechConcept = ""
@@ -35,8 +36,6 @@ class NewConceptVehicleFragment : Fragment() {
     var edit: Boolean = false
 
     lateinit var oldConcept: Concepto
-
-    val format = SimpleDateFormat("dd/mm/yyyy")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,7 +63,7 @@ class NewConceptVehicleFragment : Fragment() {
 
         setValues()
 
-        binding.btnFecha.setOnClickListener {
+        binding.etFecha.setOnClickListener {
             val newFragment: DialogFragment = SelectDateFragment()
             fragmentManager?.let { it1 -> newFragment.show(it1, "DatePicker") }
         }
@@ -79,11 +78,10 @@ class NewConceptVehicleFragment : Fragment() {
 
         // adding click listener to our save button.
         binding.btnSave.setOnClickListener {
-            if (binding.btnFecha.text != "FECHA") {
+            if (binding.etFecha.text.toString() != "FECHA") {
                 saveValues()
             } else {
-                Toast.makeText(context, "Debe elegir una fecha valida", Toast.LENGTH_LONG)
-                    .show()
+                (activity as MainActivity).toast("Debe elegir una fecha valida")
             }
         }
 
@@ -112,8 +110,7 @@ class NewConceptVehicleFragment : Fragment() {
             binding.etConcepto.setText(oldConcept.concepto)
             // Para no poder editar el nombre del concepto
             binding.etConcepto.keyListener = null
-            //conceptId = arguments?.getString("id").toString().toIntOrNull()
-            binding.btnFecha.setText(oldConcept.fecha)
+            binding.etFecha.setText(oldConcept.fecha)
             binding.etPrecio.setText(if (oldConcept.precio == null) "" else oldConcept.precio.toString())
             binding.etKMSC.setText(if (oldConcept.kms == null) "" else oldConcept.kms.toString())
             binding.etTaller.setText(oldConcept.taller)
@@ -132,7 +129,7 @@ class NewConceptVehicleFragment : Fragment() {
                 conceptId,
                 it1,
                 binding.etConcepto.text.toString(),
-                binding.btnFecha.text.toString(),
+                binding.etFecha.text.toString(),
                 binding.etKMSC.text.toString().toIntOrNull(),
                 binding.etPrecio.text.toString().toFloatOrNull(),
                 binding.etTaller.text.toString(),
@@ -157,8 +154,7 @@ class NewConceptVehicleFragment : Fragment() {
                         concept.fecha = oldConcept.fecha
                         viewModal.updateConcept(concept)
                     }
-                    Toast.makeText(context, "Concepto Modificado", Toast.LENGTH_LONG)
-                        .show()
+                    (activity as MainActivity).toast("${concept.concepto} Modificado")
                     activity?.supportFragmentManager?.popBackStack()
                 }
             }
@@ -168,10 +164,10 @@ class NewConceptVehicleFragment : Fragment() {
                 if (concept != null) {
                     viewModal.insertConcept(concept)
                 }
-                Toast.makeText(context, "Concepto Añadido", Toast.LENGTH_LONG).show()
+                (activity as MainActivity).toast("${concept?.concepto} Añadido")
                 activity?.supportFragmentManager?.popBackStack()
             } else {
-                binding.etConceptoLay.error = "Debe introducir un concepto valido"
+                binding.etConceptoLay.error = "Debe introducir un nombre de concepto valido"
             }
         }
     }
@@ -208,7 +204,7 @@ class NewConceptVehicleFragment : Fragment() {
     }
 
     fun compareFech(oldFech: String, newFech: String): Boolean {
-        var f1 = oldFech
+        /*var f1 = oldFech
         var f2 = newFech
         val d1: Int = f1.substring(0, f1.indexOf("/")).toInt()
         val d2: Int = f2.substring(0, f2.indexOf("/")).toInt()
@@ -224,7 +220,15 @@ class NewConceptVehicleFragment : Fragment() {
         var sumF1 = y1 + m1 + d1
         var sumF2 = y2 + m2 + d2
 
-        return (sumF1 < sumF2)
+        return (sumF1 < sumF2)*/
+
+        var d1 = LocalDate.parse("$oldFech", DateTimeFormatter.ofPattern("d/M/y"))
+        var d2 = LocalDate.parse("$newFech", DateTimeFormatter.ofPattern("d/M/y"))
+        //Log.i("miapp","${d1.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))}")
+        //Log.i("miapp","${d2.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))}")
+
+        return d1.isBefore(d2)
+
     }
 
 }
@@ -245,6 +249,6 @@ class SelectDateFragment : DialogFragment(),
 
     fun populateSetDate(year: Int, month: Int, day: Int) {
         fechConcept = "$day/$month/$year"
-        binding.btnFecha.setText(fechConcept)
+        binding.etFecha.setText(fechConcept)
     }
 }
