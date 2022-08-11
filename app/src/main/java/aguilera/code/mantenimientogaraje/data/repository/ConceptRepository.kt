@@ -33,4 +33,9 @@ class ConceptRepository(private val conceptoDao: ConceptoDao) {
 
     fun getConceptByMatricula(matricula: String): LiveData<List<Concepto>> =
         conceptoDao.getConceptByMatricula(matricula)
+
+    suspend fun showPreviusConceptByUpdate(concepto: Concepto) {
+        conceptoDao.showPreviusConceptByUpdate(concepto.matricula, concepto.concepto)
+    }
+
 }

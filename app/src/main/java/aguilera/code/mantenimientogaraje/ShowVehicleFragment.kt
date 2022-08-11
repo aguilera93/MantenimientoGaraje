@@ -105,7 +105,8 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
                     // updates the list.
                     //conceptAdapter.updateList(it)
                     //Filtrado segun matricula y muestra solo ultimo registro del concepto
-                    conceptAdapter.updateList(listado.sortedBy { it.fecha }.filter { it.matricula == matricula && it.visible })
+                    conceptAdapter.updateList(listado.sortedBy { it.fecha }
+                        .filter { it.matricula == matricula && it.visible })
                 }
             })
         }
@@ -114,6 +115,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
 
     override fun onConceptDeleteIconClick(concepto: Concepto) {
         viewModel.deleteConcept(concepto)
+        viewModel.showPreviusConceptByUpdate(concepto)
         (activity as MainActivity).toast("${concepto.concepto} Eliminado")
     }
 

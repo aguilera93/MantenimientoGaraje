@@ -26,7 +26,6 @@ class GarageViewModel(
     val allConcepts: LiveData<List<Concepto>>
     val repositoryC: ConceptRepository
 
-
     // initialize dao, repository and all events
     init {
         val daoV = GarageDatabase.getDatabase(application).getVehiculoDao()
@@ -63,6 +62,9 @@ class GarageViewModel(
 
     fun deleteConcept(concepto: Concepto) =
         viewModelScope.launch(Dispatchers.IO) { repositoryC.deleteConcept(concepto) }
+
+    fun showPreviusConceptByUpdate(concepto: Concepto) =
+        viewModelScope.launch(Dispatchers.IO) { repositoryC.showPreviusConceptByUpdate(concepto) }
 
     fun deleteConceptByMatricula(matricula: String) =
         viewModelScope.launch(Dispatchers.IO) { repositoryC.deleteConceptByMatricula(matricula) }

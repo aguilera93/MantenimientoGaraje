@@ -20,6 +20,12 @@ interface ConceptoDao {
     @Update
     suspend fun updateConcept(concept: Concepto)
 
+    //
+    @Query("UPDATE conceptos SET visible=1 WHERE matricula = :matricula AND concepto = :concepto " +
+            "AND id_concept = (SELECT MAX(id_concept) FROM conceptos WHERE matricula = :matricula " +
+            "AND concepto = :concepto AND visible=0)")
+    suspend fun showPreviusConceptByUpdate(matricula: String, concepto: String)
+
     // read all the events from eventTable
     // and arrange events in ascending order
     // of their ids

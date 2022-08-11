@@ -24,8 +24,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     private lateinit var viewModel: GarageViewModel
     private lateinit var conceptHistoryAdapter: ConceptHistoryAdapter
 
-    private var _binding: FragmentHistoryBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentHistoryBinding? = null
 
     var matricula = ""
     var marca = ""
@@ -36,13 +35,8 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentHistoryBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        binding = FragmentHistoryBinding.inflate(inflater, container, false)
+        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,7 +63,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         marca = arguments?.getString("marca").toString()
         modelo = arguments?.getString("modelo").toString()
 
-        binding.conceptsRV.apply {
+        binding?.conceptsRV?.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireActivity())
             adapter = conceptHistoryAdapter
@@ -90,14 +84,15 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                         }
                     val adapter =
                         context?.let { it1 -> ArrayAdapter(it1, R.layout.list_item, listConcept) }
-                    binding.menu.setAdapter(adapter)
+                    binding?.menu?.setAdapter(adapter)
 
-                    binding.menu.setOnItemClickListener { adapterView, view, i, l ->
-                        conceptHistoryAdapter.updateList(listado.sortedByDescending { it.fecha }.filter {
-                            it.matricula == matricula && it.concepto == listConcept.get(
-                                i
-                            )
-                        })
+                    binding?.menu?.setOnItemClickListener { adapterView, view, i, l ->
+                        conceptHistoryAdapter.updateList(listado.sortedByDescending { it.fecha }
+                            .filter {
+                                it.matricula == matricula && it.concepto == listConcept.get(
+                                    i
+                                )
+                            })
                     }
                 }
             })
@@ -116,7 +111,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         if (taller == "null" || taller?.length == 0) taller = "-"
 
         var precio = concepto.precio.toString()
-        if (precio == "null" || precio?.length == 0) precio = "-" else precio+="€"
+        if (precio == "null" || precio?.length == 0) precio = "-" else precio += "€"
 
         var detalles = concepto.detalles
         if (detalles == "null" || detalles?.length == 0) detalles = "-"
