@@ -21,8 +21,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
     private lateinit var viewModel: GarageViewModel
     private lateinit var conceptAdapter: ConceptAdapter
 
-    private var _binding: FragmentShowVehicleBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentShowVehicleBinding? = null
 
     var matricula = ""
     var marca = ""
@@ -33,13 +32,8 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentShowVehicleBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        binding = FragmentShowVehicleBinding.inflate(inflater, container, false)
+        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,7 +60,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
         marca = arguments?.getString("marca").toString()
         modelo = arguments?.getString("modelo").toString()
 
-        binding.btnAdd.setOnClickListener {
+        binding?.btnAdd?.setOnClickListener {
             activity?.let {
                 val fragment = NewConceptVehicleFragment()
                 fragment.arguments = Bundle().apply {
@@ -77,7 +71,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
             }
         }
 
-        binding.btnHistory.setOnClickListener {
+        binding?.btnHistory?.setOnClickListener {
             activity?.let {
                 val fragment = HistoryFragment()
                 fragment.arguments = Bundle().apply {
@@ -90,7 +84,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
             }
         }
 
-        binding.conceptsRV.apply {
+        binding?.conceptsRV?.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireActivity())
             adapter = conceptAdapter

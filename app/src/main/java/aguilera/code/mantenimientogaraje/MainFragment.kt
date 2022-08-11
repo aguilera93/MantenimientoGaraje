@@ -20,16 +20,15 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
     private lateinit var viewModel: GarageViewModel
     private lateinit var vehicleAdapter: VehicleAdapter
 
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentMainBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
-        return binding.root
+        binding = FragmentMainBinding.inflate(inflater, container, false)
+        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,7 +48,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
     }
 
     private fun initView() {
-        binding.btnAdd.setOnClickListener {
+        binding?.btnAdd?.setOnClickListener {
             activity?.let {
                 it.supportFragmentManager.beginTransaction()
                     .replace(R.id.mainContainer, NewVehicleFragment())
@@ -58,7 +57,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
             }
         }
 
-        binding.vehiclesRV.apply {
+        binding?.vehiclesRV?.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireActivity())
             adapter = vehicleAdapter
