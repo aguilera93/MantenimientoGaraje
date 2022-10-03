@@ -2,4 +2,21 @@
     <string name="app_name">Mantenimiento Garaje</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="btn_update">Actualizar</string>
+    <string name="btn_save">Guardar</string>
+    <string name="err_matricula">Debe introducir una matricula valida</string>
+    <string name="err_concepto">Debe introducir un nombre de concepto valido</string>
+    <string name="err_fecha">Debe elegir una fecha valida</string>
+    <string name="edit_vehicle">Modificar Vehiculo</string>
+    <string name="add_vehicle">Añadir Vehiculo</string>
+    <string name="update">Actualizado</string>
+    <string name="save">Guardado</string>
+    <string name="delete">Eliminado</string>
+    <string name="vehicle_list_title">Listado de Vehiculos</string>
+    <string name="date">Fecha</string>
+    <string name="taller">Taller</string>
+    <string name="price">Precio</string>
+    <string name="details">Detalles</string>
+
+    <!--<string name=""></string>-->
 </resources>

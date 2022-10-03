@@ -62,9 +62,9 @@ class NewVehicleFragment : Fragment() {
             binding?.etKMSV?.setText(arguments?.getString("kms"))
             binding?.etVIN?.setText(arguments?.getString("vin"))
             binding?.etDetallesV?.setText(arguments?.getString("detalles"))
-            binding?.btnSave?.setText("Update")
+            binding?.btnSave?.setText(getString(R.string.btn_update))
         } else {
-            binding?.btnSave?.setText("Save")
+            binding?.btnSave?.setText(getString(R.string.btn_save))
         }
     }
 
@@ -83,7 +83,7 @@ class NewVehicleFragment : Fragment() {
             if (matricula.isNotEmpty()) {
                 binding?.etMatriculaLay?.error = null
                 viewModal.updateVehicle(vehiculo)
-                (activity as MainActivity).toast("${vehiculo.matricula} Modificado")
+                (activity as MainActivity).toast("${vehiculo.matricula} ${R.string.update}")
             }
         } else {
             if (matricula.isNotEmpty()) {
@@ -92,18 +92,18 @@ class NewVehicleFragment : Fragment() {
                 // add event method to add data to our room database.
                 //why id null? because id is auto generate
                 viewModal.insertVehicle(vehiculo)
-                (activity as MainActivity).toast("${vehiculo.matricula} Añadido")
+                (activity as MainActivity).toast("${vehiculo.matricula} ${R.string.save}")
             } else {
-                binding?.etMatriculaLay?.error = "Debe introducir una matricula valida"
+                binding?.etMatriculaLay?.error = getString(R.string.err_matricula)
             }
         }
     }
 
     fun changeFragmentActionBar(){
         if (edit) {
-            (activity as MainActivity).changeActionBar("Modificar Vehiculo", "${binding?.etMatricula?.text.toString()}")
+            (activity as MainActivity).changeActionBar(getString(R.string.edit_vehicle), "${binding?.etMatricula?.text.toString()}")
         } else {
-            (activity as MainActivity).changeActionBar("Añadir Vehiculo", "")
+            (activity as MainActivity).changeActionBar(getString(R.string.add_vehicle), "")
         }
     }
 }

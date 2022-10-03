@@ -6,22 +6,23 @@ import aguilera.code.mantenimientogaraje.databinding.FragmentNewConceptVehicleBi
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.Dialog
+import android.content.ContentValues
+import android.net.Uri
+import android.opengl.Visibility
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.provider.CalendarContract.Events
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.*
+
 
 private var fechConcept = ""
 private var binding: FragmentNewConceptVehicleBinding? = null
@@ -75,7 +76,7 @@ class NewConceptVehicleFragment : Fragment() {
             if (binding?.etFecha?.text.toString() != "FECHA") {
                 saveValues()
             } else {
-                (activity as MainActivity).toast("Debe elegir una fecha valida")
+                (activity as MainActivity).toast(getString(R.string.err_fecha))
             }
         }
 
@@ -102,8 +103,10 @@ class NewConceptVehicleFragment : Fragment() {
         if (edit) {
             // setting data.
             binding?.etConcepto?.setText(oldConcept.concepto)
-            // Para no poder editar el nombre del concepto
-            binding?.etConcepto?.keyListener = null
+            //Esconde la vista que contiene el campo del concepto
+            binding?.etConceptoLay?.visibility = View.GONE
+            //Para no poder editar el nombre del concepto
+            //binding?.etConcepto?.keyListener = null
             binding?.etFecha?.setText(oldConcept.fecha)
             binding?.etPrecio?.setText(if (oldConcept.precio == null) "" else oldConcept.precio.toString())
             binding?.etKMSC?.setText(if (oldConcept.kms == null) "" else oldConcept.kms.toString())
@@ -111,9 +114,9 @@ class NewConceptVehicleFragment : Fragment() {
             binding?.etDetallesC?.setText(oldConcept.detalles)
             binding?.cbRecordar?.isChecked = oldConcept.recordar
             if (oldConcept.rFecha?.isEmpty() == false) oldConcept.rFecha?.let { setRFech(it) }
-            binding?.btnSave?.setText("Update")
+            binding?.btnSave?.setText(getString(R.string.btn_update))
         } else {
-            binding?.btnSave?.setText("Save")
+            binding?.btnSave?.setText(getString(R.string.btn_save))
         }
     }
 
@@ -149,7 +152,7 @@ class NewConceptVehicleFragment : Fragment() {
                         concept.fecha = oldConcept.fecha
                         viewModal.updateConcept(concept)
                     }
-                    (activity as MainActivity).toast("${concept.concepto} Modificado")
+                    (activity as MainActivity).toast("${concept.concepto} ${R.string.update}")
                     activity?.supportFragmentManager?.popBackStack()
                 }
             }
@@ -159,10 +162,10 @@ class NewConceptVehicleFragment : Fragment() {
                 if (concept != null) {
                     viewModal.insertConcept(concept)
                 }
-                (activity as MainActivity).toast("${concept?.concepto} Añadido")
+                (activity as MainActivity).toast("${concept?.concepto} ${R.string.save}")
                 activity?.supportFragmentManager?.popBackStack()
             } else {
-                binding?.etConceptoLay?.error = "Debe introducir un nombre de concepto valido"
+                binding?.etConceptoLay?.error = getString(R.string.err_concepto)
             }
         }
     }
@@ -170,11 +173,12 @@ class NewConceptVehicleFragment : Fragment() {
     fun changeFragmentActionBar() {
         if (edit) {
             (activity as MainActivity).changeActionBar(
-                "Modificar ${binding?.etConcepto?.text.toString()}",
+                //"Modificar ${binding?.etConcepto?.text.toString()}",
+                "${binding?.etConcepto?.text.toString()}",
                 "$matricula"
             )
         } else {
-            (activity as MainActivity).changeActionBar("Añadir Concepto a", "$matricula")
+            //(activity as MainActivity).changeActionBar("Añadir Concepto", "$matricula")
         }
     }
 
@@ -182,7 +186,36 @@ class NewConceptVehicleFragment : Fragment() {
         val day: Int? = binding?.dpRDate?.getDayOfMonth()
         val month: Int? = binding?.dpRDate?.getMonth()
         val year: Int? = binding?.dpRDate?.getYear()
+
+        //setCalendarEvent("$day/$month/$year")
+
         return "$day/$month/$year"
+    }
+
+    fun setCalendarEvent(dateStart: String) {
+        val event = ContentValues()
+        event.put(Events.CALENDAR_ID, 1)
+
+        event.put(Events.TITLE, "PRUEBA")
+        event.put(Events.DESCRIPTION, "DESCRIPCION")
+        //event.put(Events.EVENT_LOCATION, location)
+
+        event.put(Events.DTSTART, System.currentTimeMillis())
+        event.put(Events.RRULE, "FREQ=YEARLY")
+        event.put(Events.ALL_DAY, 0) // 0 for false, 1 for true
+        event.put(Events.HAS_ALARM, 1) // 0 for false, 1 for true
+
+        val timeZone = TimeZone.getDefault().id
+        event.put(Events.EVENT_TIMEZONE, timeZone)
+
+        val baseUri: Uri
+        baseUri = if (Build.VERSION.SDK_INT >= 8) {
+            Uri.parse("content://com.android.calendar/events")
+        } else {
+            Uri.parse("content://calendar/events")
+        }
+
+        requireContext().contentResolver.insert(baseUri, event)
     }
 
     fun setRFech(rFech: String) {

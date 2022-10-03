@@ -78,7 +78,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
 
     override fun onVehicleDeleteIconClick(vehiculo: Vehiculo) {
         viewModel.deleteVehicle(vehiculo)
-        (activity as MainActivity).toast("${vehiculo.matricula} Eliminado")
+        (activity as MainActivity).toast("${vehiculo.matricula} ${R.string.delete}")
     }
 
     override fun onVehicleClick(vehiculo: Vehiculo) {
@@ -96,7 +96,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
     }
 
     fun changeFragmentActionBar() {
-        (activity as MainActivity).changeActionBar("Listado de Vehiculos", "")
+        (activity as MainActivity).changeActionBar(getString(R.string.vehicle_list_title), "")
     }
 
 }

@@ -102,7 +102,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
 
     override fun onConceptDeleteIconClick(concepto: Concepto) {
         viewModel.deleteConcept(concepto)
-        (activity as MainActivity).toast("${concepto.concepto} Eliminado")
+        (activity as MainActivity).toast("${concepto.concepto} ${R.string.delete}")
     }
 
     override fun onConceptClick(concepto: Concepto) {
@@ -117,10 +117,10 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         if (detalles == "null" || detalles?.length == 0) detalles = "-"
 
         dialogBuilder.setMessage(
-            "Fecha: ${concepto.fecha}\n" +
-                    "Taller: $taller\n" +
-                    "Precio: $precio\n" +
-                    "Detalles: $detalles"
+            "${R.string.date}: ${concepto.fecha}\n" +
+                    "${R.string.taller}: $taller\n" +
+                    "${R.string.price}: $precio\n" +
+                    "${R.string.details}: $detalles"
         )
         // if the dialog is cancelable
         /*.setCancelable(false)
