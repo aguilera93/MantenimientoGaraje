@@ -3,7 +3,9 @@ package aguilera.code.mantenimientogaraje
 import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
 import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentMainBinding
+import android.content.DialogInterface
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.*
 import android.widget.Toast
@@ -77,8 +79,29 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
     }
 
     override fun onVehicleDeleteIconClick(vehiculo: Vehiculo) {
-        viewModel.deleteVehicle(vehiculo)
-        (activity as MainActivity).toast("${vehiculo.matricula} ${R.string.delete}")
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        @Suppress("DEPRECATION")
+        dialogBuilder.setMessage(
+            Html.fromHtml("${getString(R.string.que_delete)} " +
+                    "''<b>${vehiculo.marca} ${vehiculo.modelo} - ${vehiculo.matricula}</b>''?"))
+            // if the dialog is cancelable
+            .setCancelable(true)
+            .setPositiveButton(
+                "${getString(R.string.accept)}",
+                DialogInterface.OnClickListener { dialog, id ->
+                    viewModel.deleteVehicle(vehiculo)
+                    (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.deleted)}")
+                    dialog.dismiss()
+                })
+        dialogBuilder.setNegativeButton("${getString(R.string.cancel)}",
+            DialogInterface.OnClickListener { dialog, id ->
+                dialog.cancel()
+            })
+
+        val alert = dialogBuilder.create()
+        alert.setTitle("${getString(R.string.delete)}:")
+        alert.show()
+
     }
 
     override fun onVehicleClick(vehiculo: Vehiculo) {

@@ -152,7 +152,7 @@ class NewConceptVehicleFragment : Fragment() {
                         concept.fecha = oldConcept.fecha
                         viewModal.updateConcept(concept)
                     }
-                    (activity as MainActivity).toast("${concept.concepto} ${R.string.update}")
+                    (activity as MainActivity).toast("${concept.concepto} ${getString(R.string.update)}")
                     activity?.supportFragmentManager?.popBackStack()
                 }
             }
@@ -162,7 +162,7 @@ class NewConceptVehicleFragment : Fragment() {
                 if (concept != null) {
                     viewModal.insertConcept(concept)
                 }
-                (activity as MainActivity).toast("${concept?.concepto} ${R.string.save}")
+                (activity as MainActivity).toast("${concept?.concepto} ${getString(R.string.saved)}")
                 activity?.supportFragmentManager?.popBackStack()
             } else {
                 binding?.etConceptoLay?.error = getString(R.string.err_concepto)

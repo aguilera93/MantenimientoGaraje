@@ -3,18 +3,16 @@ package aguilera.code.mantenimientogaraje
 import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentShowVehicleBinding
+import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
+import android.text.Html
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import java.text.SimpleDateFormat
-import java.util.Locale.filter
+import java.nio.file.Files.delete
 
 class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIconClickInterface {
 
@@ -112,9 +110,29 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
     }
 
     override fun onConceptDeleteIconClick(concepto: Concepto) {
-        viewModel.deleteConcept(concepto)
-        viewModel.showPreviusConceptByUpdate(concepto)
-        (activity as MainActivity).toast("${concepto.concepto} ${R.string.delete}")
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        @Suppress("DEPRECATION")
+        dialogBuilder.setMessage(
+            Html.fromHtml("${getString(R.string.que_delete)} ''<b>${concepto.concepto}</b>''?"))
+            // if the dialog is cancelable
+            .setCancelable(true)
+            .setPositiveButton(
+                "${getString(R.string.accept)}",
+                DialogInterface.OnClickListener { dialog, id ->
+                    viewModel.deleteConcept(concepto)
+                    viewModel.showPreviusConceptByUpdate(concepto)
+                    (activity as MainActivity).toast("${concepto.concepto} ${getString(R.string.deleted)}")
+                    dialog.dismiss()
+                })
+        dialogBuilder.setNegativeButton("${getString(R.string.cancel)}",
+            DialogInterface.OnClickListener { dialog, id ->
+                dialog.cancel()
+            })
+
+        val alert = dialogBuilder.create()
+        alert.setTitle("${getString(R.string.delete)}:")
+        alert.show()
+
     }
 
     override fun onConceptClick(concepto: Concepto) {

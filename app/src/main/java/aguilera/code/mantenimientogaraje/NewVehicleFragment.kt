@@ -80,28 +80,32 @@ class NewVehicleFragment : Fragment() {
         // checking the type and then saving or updating the data.
         if (edit) {
 
-            if (matricula.isNotEmpty()) {
+            if (matricula != "") {
                 binding?.etMatriculaLay?.error = null
-                viewModal.updateVehicle(vehiculo)
-                (activity as MainActivity).toast("${vehiculo.matricula} ${R.string.update}")
+                if (matricula != null) {
+                    viewModal.updateVehicle(vehiculo)
+                    (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.update)}")
+                }
             }
         } else {
-            if (matricula.isNotEmpty()) {
+            if (matricula != "") {
                 binding?.etMatriculaLay?.error = null
-                // if the string is not empty we are calling
-                // add event method to add data to our room database.
-                //why id null? because id is auto generate
-                viewModal.insertVehicle(vehiculo)
-                (activity as MainActivity).toast("${vehiculo.matricula} ${R.string.save}")
+                if (matricula != null) {
+                    viewModal.insertVehicle(vehiculo)
+                }
+                (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.saved)}")
             } else {
                 binding?.etMatriculaLay?.error = getString(R.string.err_matricula)
             }
         }
     }
 
-    fun changeFragmentActionBar(){
+    fun changeFragmentActionBar() {
         if (edit) {
-            (activity as MainActivity).changeActionBar(getString(R.string.edit_vehicle), "${binding?.etMatricula?.text.toString()}")
+            (activity as MainActivity).changeActionBar(
+                getString(R.string.edit_vehicle),
+                "${binding?.etMatricula?.text.toString()}"
+            )
         } else {
             (activity as MainActivity).changeActionBar(getString(R.string.add_vehicle), "")
         }
