@@ -17,6 +17,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     ConceptHistoryDeleteIconClickInterface {
@@ -87,7 +89,12 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                     binding?.menu?.setAdapter(adapter)
 
                     binding?.menu?.setOnItemClickListener { adapterView, view, i, l ->
-                        conceptHistoryAdapter.updateList(listado.sortedByDescending { it.fecha }
+                        conceptHistoryAdapter.updateList(listado.sortedByDescending {
+                            LocalDate.parse(
+                                it.fecha.toString(),
+                                DateTimeFormatter.ofPattern("d/M/y")
+                            )
+                        }
                             .filter {
                                 it.matricula == matricula && it.concepto == listConcept.get(
                                     i
