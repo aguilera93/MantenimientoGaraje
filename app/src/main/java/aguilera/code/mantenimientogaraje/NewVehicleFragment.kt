@@ -4,6 +4,7 @@ import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
 import aguilera.code.mantenimientogaraje.data.ui.GarageViewModel
 import aguilera.code.mantenimientogaraje.databinding.FragmentNewVehicleBinding
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -47,7 +48,6 @@ class NewVehicleFragment : Fragment() {
         // adding click listener to our save button.
         binding?.btnSave?.setOnClickListener {
             saveValues()
-            activity?.supportFragmentManager?.popBackStack()
         }
 
         changeFragmentActionBar()
@@ -57,6 +57,9 @@ class NewVehicleFragment : Fragment() {
 
         if (edit) {
             binding?.etMatricula?.setText(arguments?.getString("matricula"))
+            //Esconde la vista que contiene el campo de la matricula
+            binding?.etMatriculaLay?.visibility = View.GONE
+            //------------------------------------------------------
             binding?.etMarca?.setText(arguments?.getString("marca"))
             binding?.etModelo?.setText(arguments?.getString("modelo"))
             binding?.etKMSV?.setText(arguments?.getString("kms"))
@@ -79,21 +82,18 @@ class NewVehicleFragment : Fragment() {
         val vehiculo = Vehiculo(matricula, marca, modelo, kms, vin, detalles)
         // checking the type and then saving or updating the data.
         if (edit) {
-
-            if (matricula != "") {
+            if (!matricula.isNullOrBlank()) {
                 binding?.etMatriculaLay?.error = null
-                if (matricula != null) {
-                    viewModal.updateVehicle(vehiculo)
-                    (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.update)}")
-                }
+                viewModal.updateVehicle(vehiculo)
+                (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.update)}")
+                activity?.supportFragmentManager?.popBackStack()
             }
         } else {
-            if (matricula != "") {
+            if (!matricula.isNullOrBlank()) {
                 binding?.etMatriculaLay?.error = null
-                if (matricula != null) {
-                    viewModal.insertVehicle(vehiculo)
-                }
+                viewModal.insertVehicle(vehiculo)
                 (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.saved)}")
+                activity?.supportFragmentManager?.popBackStack()
             } else {
                 binding?.etMatriculaLay?.error = getString(R.string.err_matricula)
             }
