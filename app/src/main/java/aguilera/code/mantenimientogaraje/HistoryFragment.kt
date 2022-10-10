@@ -5,7 +5,9 @@ import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentHistoryBinding
 import android.app.Activity
 import android.content.DialogInterface
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -88,6 +90,9 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                         context?.let { it1 -> ArrayAdapter(it1, R.layout.list_item, listConcept) }
                     binding?.menu?.setAdapter(adapter)
 
+                    //Solucion al problema de padding para AutoCompleteTextView
+                    binding?.menu?.setDropDownBackgroundResource(R.color.app)
+
                     binding?.menu?.setOnItemClickListener { adapterView, view, i, l ->
                         conceptHistoryAdapter.updateList(listado.sortedByDescending {
                             LocalDate.parse(
@@ -108,8 +113,29 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     }
 
     override fun onConceptDeleteIconClick(concepto: Concepto) {
-        viewModel.deleteConcept(concepto)
-        (activity as MainActivity).toast("${concepto.concepto} ${getString(R.string.delete)}")
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        @Suppress("DEPRECATION")
+        dialogBuilder.setMessage(
+            Html.fromHtml("${getString(R.string.que_delete)} ''<b>${concepto.concepto} - ${concepto.detalles}</b>''?")
+        )
+            // if the dialog is cancelable
+            .setCancelable(true)
+            .setPositiveButton(
+                "${getString(R.string.accept)}",
+                DialogInterface.OnClickListener { dialog, id ->
+                    viewModel.deleteConcept(concepto)
+                    viewModel.showPreviusConceptByUpdate(concepto)
+                    (activity as MainActivity).toast("${concepto.concepto} ${getString(R.string.deleted)}")
+                    dialog.dismiss()
+                })
+        dialogBuilder.setNegativeButton("${getString(R.string.cancel)}",
+            DialogInterface.OnClickListener { dialog, id ->
+                dialog.cancel()
+            })
+
+        val alert = dialogBuilder.create()
+        alert.setTitle("${getString(R.string.delete)}:")
+        alert.show()
     }
 
     override fun onConceptClick(concepto: Concepto) {
