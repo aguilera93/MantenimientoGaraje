@@ -15,6 +15,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -33,6 +35,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     var matricula = ""
     var marca = ""
     var modelo = ""
+    lateinit var listC: List<Concepto>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,30 +89,41 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                         .forEach { c ->
                             listConcept.add(c.concepto)
                         }
+
+                    listC = listado
                     val adapter =
                         context?.let { it1 -> ArrayAdapter(it1, R.layout.list_item, listConcept) }
                     binding?.menu?.setAdapter(adapter)
 
-                    //Solucion al problema de padding para AutoCompleteTextView
-                    binding?.menu?.setDropDownBackgroundResource(R.color.app)
+                    //Solucion al problema de padding para AutoCompleteTextView(menu)
+                    binding?.menu?.setDropDownBackgroundDrawable(context?.let { it1 ->
+                        ContextCompat.getDrawable(
+                            it1,
+                            R.color.app
+                        )
+                    })
+                    //---------------------------------------------------------
 
                     binding?.menu?.setOnItemClickListener { adapterView, view, i, l ->
-                        conceptHistoryAdapter.updateList(listado.sortedByDescending {
-                            LocalDate.parse(
-                                it.fecha.toString(),
-                                DateTimeFormatter.ofPattern("d/M/y")
-                            )
-                        }
-                            .filter {
-                                it.matricula == matricula && it.concepto == listConcept.get(
-                                    i
-                                )
-                            })
+                        updateList(listC, listConcept.get(i))
                     }
                 }
             })
         }
 
+    }
+
+    private fun updateList(list: List<Concepto>, con: String) {
+        var listF = list.sortedByDescending {
+            LocalDate.parse(
+                it.fecha.toString(),
+                DateTimeFormatter.ofPattern("d/M/y")
+            )
+        }
+            .filter {
+                it.matricula == matricula && it.concepto == con
+            }
+        conceptHistoryAdapter.updateList(listF)
     }
 
     override fun onConceptDeleteIconClick(concepto: Concepto) {
@@ -127,6 +141,10 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                     viewModel.showPreviusConceptByUpdate(concepto)
                     (activity as MainActivity).toast("${concepto.concepto} ${getString(R.string.deleted)}")
                     dialog.dismiss()
+                    //Actualizacion del listado tras el borrado de un concepto
+                    listC = listC.filter { it.id_concept != concepto.id_concept }
+                    updateList(listC, concepto.concepto)
+                    //----------------------------------------------------------------------
                 })
         dialogBuilder.setNegativeButton("${getString(R.string.cancel)}",
             DialogInterface.OnClickListener { dialog, id ->
