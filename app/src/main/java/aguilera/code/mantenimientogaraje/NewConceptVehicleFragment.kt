@@ -168,7 +168,7 @@ class NewConceptVehicleFragment : Fragment() {
             binding?.etFechaLay?.error = null
             validate = true
         } else {
-            binding?.etFechaLay?.error = getString(R.string.err_fecha)
+            binding?.etFechaLay?.error = getString(R.string.err_campo_obligatorio)
             validate = false
         }
 
@@ -178,7 +178,17 @@ class NewConceptVehicleFragment : Fragment() {
                 validate = true
             }
         } else {
-            binding?.etConceptoLay?.error = getString(R.string.err_concepto)
+            binding?.etConceptoLay?.error = getString(R.string.err_campo_obligatorio)
+            validate = false
+        }
+
+        if (!binding?.etDetallesC?.text.isNullOrBlank()) {
+            binding?.etDetallesCLay?.error = null
+            if (validate) {
+                validate = true
+            }
+        } else {
+            binding?.etDetallesCLay?.error = getString(R.string.err_campo_obligatorio)
             validate = false
         }
     }

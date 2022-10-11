@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale.filter
 
 class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIconClickInterface {
 
@@ -107,8 +108,6 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
                     }
                         .filter { it.matricula == matricula && it.visible }
                     conceptAdapter.updateList(listF)
-
-                    listF.forEach { concepto -> Log.e("miapp", concepto.fecha) }
 
                     if (listF.size > 0) binding?.btnHistory?.visibility =
                         View.VISIBLE else binding?.btnHistory?.visibility = View.INVISIBLE

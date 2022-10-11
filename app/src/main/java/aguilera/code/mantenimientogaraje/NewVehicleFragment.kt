@@ -95,7 +95,7 @@ class NewVehicleFragment : Fragment() {
                 (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.saved)}")
                 activity?.supportFragmentManager?.popBackStack()
             } else {
-                binding?.etMatriculaLay?.error = getString(R.string.err_matricula)
+                binding?.etMatriculaLay?.error = getString(R.string.err_campo_obligatorio)
             }
         }
     }

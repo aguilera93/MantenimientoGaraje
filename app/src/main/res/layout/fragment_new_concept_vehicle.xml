@@ -11,7 +11,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="CONCEPTO"
+        android:hint="*CONCEPTO*"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:textColorHint="@color/white"
@@ -33,11 +33,11 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/etFechaLay"
+        android:id="@+id/etDetallesCLay"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="FECHA"
+        android:hint="*DETALLES*"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:textColorHint="@color/white"
@@ -50,6 +50,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etConceptoLay">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDetallesC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/etFechaLay"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="*FECHA*"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:textColorHint="@color/white"
+        app:boxBackgroundColor="@color/app"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etDetallesCLay">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/etFecha"
@@ -139,32 +165,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/etDetallesCLay"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="DETALLES"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:textColorHint="@color/white"
-        app:boxBackgroundColor="@color/app"
-        app:boxCornerRadiusBottomEnd="10dp"
-        app:boxCornerRadiusBottomStart="10dp"
-        app:boxCornerRadiusTopEnd="10dp"
-        app:boxCornerRadiusTopStart="10dp"
-        app:errorEnabled="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etTallerLay">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etDetallesC"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
     <CheckBox
         android:id="@+id/cbRecordar"
         android:layout_width="match_parent"
@@ -174,7 +174,7 @@
         android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etDetallesCLay"
+        app:layout_constraintTop_toBottomOf="@+id/etTallerLay"
         tools:ignore="MissingConstraints" />
 
     <DatePicker
@@ -186,7 +186,7 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etDetallesCLay" />
+        app:layout_constraintTop_toBottomOf="@+id/etTallerLay" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSave"
