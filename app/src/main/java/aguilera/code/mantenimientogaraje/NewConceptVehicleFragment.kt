@@ -33,6 +33,7 @@ class NewConceptVehicleFragment : Fragment() {
     var conceptId: Int? = null
     var matricula: String = ""
     var edit: Boolean = false
+    var validate: Boolean = false
     lateinit var oldConcept: Concepto
 
     override fun onCreateView(
@@ -71,12 +72,7 @@ class NewConceptVehicleFragment : Fragment() {
 
         // adding click listener to our save button.
         binding?.btnSave?.setOnClickListener {
-            if (!binding?.etFecha?.text.isNullOrBlank()) {
-                saveValues()
-                binding?.etFechaLay?.error = null
-            } else {
-                binding?.etFechaLay?.error = getString(R.string.err_fecha)
-            }
+            saveValues()
         }
 
     }
@@ -142,9 +138,10 @@ class NewConceptVehicleFragment : Fragment() {
             true
         )
 
+        validateFields()
+
         if (edit) {
-            if (!concepto.isNullOrBlank()) {
-                binding?.etConcepto?.error = null
+            if (!concepto.isNullOrBlank() && validate) {
                 if (compareFech(oldConcept.fecha, concept.fecha)) {
                     concept.id_concept = null
                     viewModal.insertConcept(concept)
@@ -158,14 +155,31 @@ class NewConceptVehicleFragment : Fragment() {
                 activity?.supportFragmentManager?.popBackStack()
             }
         } else {
-            if (!concepto.isNullOrBlank()) {
-                binding?.etConceptoLay?.error = null
+            if (!concepto.isNullOrBlank() && validate) {
                 viewModal.insertConcept(concept)
                 (activity as MainActivity).toast("${concept?.concepto} ${getString(R.string.saved)}")
                 activity?.supportFragmentManager?.popBackStack()
-            } else {
-                binding?.etConceptoLay?.error = getString(R.string.err_concepto)
             }
+        }
+    }
+
+    fun validateFields() {
+        if (!binding?.etFecha?.text.isNullOrBlank()) {
+            binding?.etFechaLay?.error = null
+            validate = true
+        } else {
+            binding?.etFechaLay?.error = getString(R.string.err_fecha)
+            validate = false
+        }
+
+        if (!binding?.etConcepto?.text.isNullOrBlank()) {
+            binding?.etConceptoLay?.error = null
+            if (validate) {
+                validate = true
+            }
+        } else {
+            binding?.etConceptoLay?.error = getString(R.string.err_concepto)
+            validate = false
         }
     }
 
