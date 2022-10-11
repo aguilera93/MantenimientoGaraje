@@ -6,11 +6,8 @@ import aguilera.code.mantenimientogaraje.databinding.FragmentMainBinding
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -35,6 +32,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
 
         viewModel = ViewModelProvider(
             this,
@@ -47,6 +45,28 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
         observeEvents()
         changeFragmentActionBar()
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                // navigate to settings screen
+                true
+            }
+            R.id.action_clear -> {
+                // delete all vehicles
+                true
+            }
+            R.id.action_info -> {
+                // show info screen
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun initView() {

@@ -39,6 +39,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
 
         //(activity as AppCompatActivity?)!!.supportActionBar!!.show()
 
@@ -53,6 +54,28 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
         observeEvents()
         changeFragmentActionBar()
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.show_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                // navigate to settings screen
+                true
+            }
+            R.id.action_edit -> {
+                // edit vehicle
+                true
+            }
+            R.id.action_info -> {
+                // show info screen
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun initView() {
