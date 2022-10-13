@@ -135,7 +135,7 @@
             android:id="@+id/etPrecio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number" />
+            android:inputType="numberDecimal" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -169,25 +169,22 @@
         android:id="@+id/cbRecordar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Recordar"
-        android:visibility="invisible"
-        android:enabled="false"
+        android:text="Recordar:"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etTallerLay"
         tools:ignore="MissingConstraints" />
-
+<!--
     <DatePicker
         android:id="@+id/dpRDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:calendarViewShown="false"
         android:datePickerMode="spinner"
-        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etTallerLay" />
-
+-->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSave"
         style="@style/Widget.MaterialComponents.Button"

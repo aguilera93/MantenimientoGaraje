@@ -8,10 +8,10 @@ import android.app.DatePickerDialog.OnDateSetListener
 import android.app.Dialog
 import android.content.ContentValues
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.provider.CalendarContract.Events
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +24,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-private var fechConcept = ""
+private var rFechCheck = ""
 private var binding: FragmentNewConceptVehicleBinding? = null
 
 class NewConceptVehicleFragment : Fragment() {
@@ -58,16 +58,32 @@ class NewConceptVehicleFragment : Fragment() {
         setValues()
 
         binding?.etFecha?.setOnClickListener {
-            val newFragment: DialogFragment = SelectDateFragment()
+            val newFragment: DialogFragment = SelectDateFragment(1)
             fragmentManager?.let { it1 -> newFragment.show(it1, "DatePicker") }
         }
 
         changeFragmentActionBar()
 
-        binding?.dpRDate?.visibility = rememberCheck(binding?.cbRecordar?.isChecked)
+        //binding?.dpRDate?.visibility = rememberCheck(binding?.cbRecordar?.isChecked)
 
-        binding?.cbRecordar?.setOnCheckedChangeListener { buttonView, isChecked ->
-            binding?.dpRDate?.visibility = rememberCheck(isChecked)
+        /*binding?.cbRecordar?.setOnCheckedChangeListener { buttonView, isChecked ->
+            //binding?.dpRDate?.visibility = rememberCheck(isChecked)
+            if (rememberCheck(isChecked)) {
+                val newFragment: DialogFragment = SelectDateFragment(2)
+                fragmentManager?.let { it1 -> newFragment.show(it1, "DatePicker") }
+            }
+        }*/
+
+        binding?.cbRecordar?.setOnClickListener {
+            rFechCheck = ""
+            if (rememberCheck(binding?.cbRecordar?.isChecked)) {
+                val newFragment: DialogFragment = SelectDateFragment(2)
+                fragmentManager?.let { it1 -> newFragment.show(it1, "DatePicker") }
+            }
+            if (rFechCheck.isNullOrBlank()) {
+                binding?.cbRecordar?.isChecked = false
+                binding?.cbRecordar?.setText("Recordar: ")
+            }
         }
 
         // adding click listener to our save button.
@@ -87,11 +103,13 @@ class NewConceptVehicleFragment : Fragment() {
         }
     }
 
-    fun rememberCheck(checked: Boolean?): Int {
+    fun rememberCheck(checked: Boolean?): Boolean {
         if (checked == true) {
-            return View.VISIBLE
+            //return View.VISIBLE
+            return true
         }
-        return View.INVISIBLE
+        //return View.INVISIBLE
+        return false
     }
 
     fun setValues() {
@@ -107,7 +125,10 @@ class NewConceptVehicleFragment : Fragment() {
             binding?.etTaller?.setText(oldConcept.taller)
             binding?.etDetallesC?.setText(oldConcept.detalles)
             binding?.cbRecordar?.isChecked = oldConcept.recordar
-            if (oldConcept.rFecha?.isEmpty() == false) oldConcept.rFecha?.let { setRFech(it) }
+            //if (oldConcept.rFecha?.isEmpty() == false) oldConcept.rFecha?.let { setRFech(it) }
+            if (oldConcept.rFecha?.isEmpty() == false) rFechCheck =
+                oldConcept.rFecha?.toString().toString()
+            binding?.cbRecordar?.setText("Recordar: $rFechCheck")
             binding?.btnSave?.setText(getString(R.string.btn_update))
         } else {
             binding?.btnSave?.setText(getString(R.string.btn_save))
@@ -134,7 +155,8 @@ class NewConceptVehicleFragment : Fragment() {
             taller,
             detalles,
             if (check != null) check else false,
-            if (check != null && check) getRFech() else "",
+            //if (check != null && check) getRFech() else "",
+            if (check != null && check) rFechCheck else "",
             true
         )
 
@@ -205,7 +227,7 @@ class NewConceptVehicleFragment : Fragment() {
         }
     }
 
-    fun getRFech(): String {
+    /*fun getRFech(): String {
         val day: Int? = binding?.dpRDate?.getDayOfMonth()
         val month: Int? = binding?.dpRDate?.getMonth()
         val year: Int? = binding?.dpRDate?.getYear()
@@ -213,7 +235,7 @@ class NewConceptVehicleFragment : Fragment() {
         //setCalendarEvent("$day/$month/$year")
 
         return "$day/$month/$year"
-    }
+    }*/
 
     fun setCalendarEvent(dateStart: String) {
         val event = ContentValues()
@@ -241,7 +263,7 @@ class NewConceptVehicleFragment : Fragment() {
         requireContext().contentResolver.insert(baseUri, event)
     }
 
-    fun setRFech(rFech: String) {
+    /*fun setRFech(rFech: String) {
         var fecha = rFech
         val day: Int = fecha.substring(0, fecha.indexOf("/")).toInt()
         fecha = fecha.substring(fecha.indexOf("/") + 1)
@@ -249,7 +271,7 @@ class NewConceptVehicleFragment : Fragment() {
         fecha = fecha.substring(fecha.indexOf("/") + 1)
         val year: Int = fecha.toInt()
         binding?.dpRDate?.updateDate(year, month, day)
-    }
+    }*/
 
     fun compareFech(oldFech: String, newFech: String): Boolean {
         var d1 = LocalDate.parse("$oldFech", DateTimeFormatter.ofPattern("d/M/y"))
@@ -258,8 +280,9 @@ class NewConceptVehicleFragment : Fragment() {
     }
 }
 
-class SelectDateFragment : DialogFragment(),
+class SelectDateFragment(i: Int) : DialogFragment(),
     OnDateSetListener {
+    var n = i
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val calendar: Calendar = Calendar.getInstance()
         val yy: Int = calendar.get(Calendar.YEAR)
@@ -273,7 +296,13 @@ class SelectDateFragment : DialogFragment(),
     }
 
     fun populateSetDate(year: Int, month: Int, day: Int) {
-        fechConcept = "$day/$month/$year"
-        binding?.etFecha?.setText(fechConcept)
+        var fechConcept = "$day/$month/$year"
+        if (n == 1) {
+            binding?.etFecha?.setText(fechConcept)
+        } else if (n == 2) {
+            rFechCheck = fechConcept
+            binding?.cbRecordar?.isChecked = true
+            binding?.cbRecordar?.setText("Recordar: $rFechCheck")
+        }
     }
 }
