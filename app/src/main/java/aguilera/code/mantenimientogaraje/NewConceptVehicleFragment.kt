@@ -82,7 +82,7 @@ class NewConceptVehicleFragment : Fragment() {
             }
             if (rFechCheck.isNullOrBlank()) {
                 binding?.cbRecordar?.isChecked = false
-                binding?.cbRecordar?.setText("Recordar: ")
+                binding?.cbRecordar?.setText(getString(R.string.remember))
             }
         }
 
@@ -302,7 +302,7 @@ class SelectDateFragment(i: Int) : DialogFragment(),
         } else if (n == 2) {
             rFechCheck = fechConcept
             binding?.cbRecordar?.isChecked = true
-            binding?.cbRecordar?.setText("Recordar: $rFechCheck")
+            binding?.cbRecordar?.setText("${getString(R.string.remember)} $rFechCheck")
         }
     }
 }
