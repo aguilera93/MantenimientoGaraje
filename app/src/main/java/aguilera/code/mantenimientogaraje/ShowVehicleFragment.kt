@@ -108,6 +108,19 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
             }
         }
 
+        binding?.btnRemember?.setOnClickListener {
+            activity?.let {
+                val fragment = RememberFragment()
+                fragment.arguments = Bundle().apply {
+                    putString("matricula", matricula)
+                    putString("marca", marca)
+                    putString("modelo", modelo)
+                }
+                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
+                    .addToBackStack("RememberFragment").commit()
+            }
+        }
+
         binding?.conceptsRV?.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireActivity())
@@ -134,6 +147,15 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
 
                     if (listF.size > 0) binding?.btnHistory?.visibility =
                         View.VISIBLE else binding?.btnHistory?.visibility = View.INVISIBLE
+
+                    //Muestra el boton remember si existe algun registro que recordar
+                    var n=0
+                    listF.forEach { concepto ->
+                        if(concepto.recordar) n++
+                    }
+                    if (n>0) binding?.btnRemember?.visibility =
+                        View.VISIBLE else binding?.btnRemember?.visibility = View.INVISIBLE
+                    //---------------------------------------------------------------------
                 }
             })
         }

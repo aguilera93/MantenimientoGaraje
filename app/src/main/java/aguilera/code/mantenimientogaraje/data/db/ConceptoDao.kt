@@ -26,6 +26,10 @@ interface ConceptoDao {
             "AND concepto = :concepto AND visible=0)")
     suspend fun showPreviusConceptByUpdate(matricula: String, concepto: String)
 
+    //
+    @Query("UPDATE conceptos SET recordar=0, rFecha='' WHERE id_concept = :id_concepto")
+    suspend fun clearRememberConceptByUpdate(id_concepto: Int)
+
     // read all the events from eventTable
     // and arrange events in ascending order
     // of their ids

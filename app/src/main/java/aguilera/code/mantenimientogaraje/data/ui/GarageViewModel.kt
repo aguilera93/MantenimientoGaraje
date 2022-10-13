@@ -66,6 +66,9 @@ class GarageViewModel(
     fun showPreviusConceptByUpdate(concepto: Concepto) =
         viewModelScope.launch(Dispatchers.IO) { repositoryC.showPreviusConceptByUpdate(concepto) }
 
+    fun clearRememberConceptByUpdate(concepto: Concepto) =
+        viewModelScope.launch(Dispatchers.IO) { repositoryC.clearRememberConceptByUpdate(concepto) }
+
     fun deleteConceptByMatricula(matricula: String) =
         viewModelScope.launch(Dispatchers.IO) { repositoryC.deleteConceptByMatricula(matricula) }
 

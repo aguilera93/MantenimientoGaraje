@@ -37,5 +37,8 @@ class ConceptRepository(private val conceptoDao: ConceptoDao) {
     suspend fun showPreviusConceptByUpdate(concepto: Concepto) {
         conceptoDao.showPreviusConceptByUpdate(concepto.matricula, concepto.concepto)
     }
+    suspend fun clearRememberConceptByUpdate(concepto: Concepto) {
+        concepto.id_concept?.let { conceptoDao.clearRememberConceptByUpdate(it) }
+    }
 
 }

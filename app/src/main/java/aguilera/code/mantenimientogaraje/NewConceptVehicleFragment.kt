@@ -128,7 +128,7 @@ class NewConceptVehicleFragment : Fragment() {
             //if (oldConcept.rFecha?.isEmpty() == false) oldConcept.rFecha?.let { setRFech(it) }
             if (oldConcept.rFecha?.isEmpty() == false) rFechCheck =
                 oldConcept.rFecha?.toString().toString()
-            binding?.cbRecordar?.setText("Recordar: $rFechCheck")
+            binding?.cbRecordar?.setText("Recordar: ${oldConcept.rFecha}")
             binding?.btnSave?.setText(getString(R.string.btn_update))
         } else {
             binding?.btnSave?.setText(getString(R.string.btn_save))
@@ -168,6 +168,10 @@ class NewConceptVehicleFragment : Fragment() {
                     concept.id_concept = null
                     viewModal.insertConcept(concept)
                     oldConcept.visible = false
+                    //Se limpian los campos para recordar
+                    oldConcept.recordar = false
+                    oldConcept.rFecha = ""
+                    //-----------------------------------
                     viewModal.updateConcept(oldConcept)
                 } else {
                     concept.fecha = oldConcept.fecha
