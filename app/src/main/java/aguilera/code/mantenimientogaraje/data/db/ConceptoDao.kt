@@ -38,6 +38,9 @@ interface ConceptoDao {
     // why not use suspend ? because Room does not support LiveData with suspended functions.
     // LiveData already works on a background thread and should be used directly without using coroutines
 
+    @Query("Select * from conceptos order by matricula ASC")
+    suspend fun getConcepts(): List<Concepto>
+
     // delete all events
     @Query("DELETE FROM conceptos")
     suspend fun clearConcepts()

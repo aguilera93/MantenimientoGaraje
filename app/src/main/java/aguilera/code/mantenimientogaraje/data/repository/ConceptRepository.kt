@@ -9,6 +9,8 @@ class ConceptRepository(private val conceptoDao: ConceptoDao) {
     // get all the events
     fun getAllConcepts(): LiveData<List<Concepto>> = conceptoDao.getAllConcepts()
 
+    suspend fun getConcepts(): List<Concepto> = conceptoDao.getConcepts()
+
     // adds an event to our database.
     suspend fun insertConcept(concepto: Concepto) {
         conceptoDao.insertConcept(concepto)

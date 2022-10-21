@@ -37,6 +37,10 @@ class GarageViewModel(
         allConcepts = repositoryC.getAllConcepts()
     }
 
+    @JvmName("getConcepts1")
+    suspend fun getConcepts(): List<Concepto> =
+        repositoryC.getConcepts()
+
     fun insertVehicle(vehiculo: Vehiculo) =
         viewModelScope.launch(Dispatchers.IO) { repositoryV.insertVehicle(vehiculo) }
 

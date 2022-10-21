@@ -94,6 +94,12 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                     val adapter =
                         context?.let { it1 -> ArrayAdapter(it1, R.layout.list_item, listConcept) }
                     binding?.menu?.setAdapter(adapter)
+                    //Auto selleccion del historial de conceptos------
+                    //Selecciono el primer concepto
+                    binding?.menu?.setText(listConcept[0], false)
+                    //actualizo el listado con el primer concepto
+                    updateList(listC, listConcept[0])
+                    //------------------------------------------------
 
                     //Solucion al problema de padding para AutoCompleteTextView(menu)
                     binding?.menu?.setDropDownBackgroundDrawable(context?.let { it1 ->
