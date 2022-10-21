@@ -2,6 +2,7 @@ package aguilera.code.mantenimientogaraje.data.ui
 
 import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.databinding.ConceptRvItemBinding
+import aguilera.code.mantenimientogaraje.databinding.HistoryRvItemBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +18,7 @@ class ConceptHistoryAdapter(
 
         val inflater = LayoutInflater.from(parent.context)
 
-        val binding = ConceptRvItemBinding.inflate(inflater, parent, false)
+        val binding = HistoryRvItemBinding.inflate(inflater, parent, false)
         return ConceptHistoryViewHolder(binding)
     }
 
@@ -70,5 +71,5 @@ interface ConceptHistoryClickInterface {
     fun onConceptClick(concepto: Concepto)
 }
 
-class ConceptHistoryViewHolder(val binding: ConceptRvItemBinding) :
+class ConceptHistoryViewHolder(val binding: HistoryRvItemBinding) :
     RecyclerView.ViewHolder(binding.root) {}

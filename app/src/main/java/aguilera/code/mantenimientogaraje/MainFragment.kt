@@ -1,8 +1,11 @@
 package aguilera.code.mantenimientogaraje
 
+import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
 import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentMainBinding
+import android.app.Dialog
+import android.content.ClipData.newIntent
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
@@ -13,8 +16,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickInterface {
+class MainFragment : Fragment(), VehicleClickInterface, VehicleLongClickInterface, VehicleDeleteIconClickInterface {
 
     private lateinit var viewModel: GarageViewModel
     private lateinit var vehicleAdapter: VehicleAdapter
@@ -39,7 +43,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
             AndroidViewModelFactory.getInstance(requireActivity().getApplication())
         ).get(GarageViewModel::class.java)
 
-        vehicleAdapter = VehicleAdapter(this, this)
+        vehicleAdapter = VehicleAdapter(this, this, this)
 
         initView()
         observeEvents()
@@ -124,6 +128,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
 
     }
 
+
     override fun onVehicleClick(vehiculo: Vehiculo) {
         // opening a new intent and passing a data to it.
         activity?.let {
@@ -137,6 +142,59 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickIn
                 .addToBackStack("ShowVehicleFragment").commit()
         }
     }
+
+    override fun onVehicleLongClick(vehiculo: Vehiculo) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.menu_alert)
+        dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
+        val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
+        val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
+        val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
+        btnHistory.setOnClickListener {
+            newIntent(vehiculo, "h")
+            dialog.dismiss()
+        }
+        btnEdit.setOnClickListener {
+            newIntent(vehiculo, "e")
+            dialog.dismiss()
+        }
+        btnDelete.setOnClickListener {
+            newIntent(vehiculo, "d")
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    fun newIntent(vehiculo: Vehiculo, option: String) {
+        // opening a new intent and passing a data to it.
+        when (option) {
+            "h" -> activity?.let {
+                val fragment = HistoryFragment()
+                fragment.arguments = Bundle().apply {
+                    putString("matricula", vehiculo.matricula)
+                    putString("marca", vehiculo.marca)
+                    putString("modelo", vehiculo.modelo)
+                    putString("concepto", "")
+                }
+                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
+                    .addToBackStack("HistoryFragment").commit()
+            }
+            "e" -> activity?.let {
+                val fragment = NewVehicleFragment()
+                fragment.arguments = Bundle().apply {
+                    putString("type", "Edit")
+                    putString("matricula", vehiculo.matricula)
+                    putSerializable("vehiculo", vehiculo)
+                }
+                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
+                    .addToBackStack("NewVehicleFragment").commit()
+            }
+            "d" -> onVehicleDeleteIconClick(vehiculo)
+        }
+    }
+
 
     fun changeFragmentActionBar() {
         (activity as MainActivity).changeActionBar(getString(R.string.vehicle_list_title), "")

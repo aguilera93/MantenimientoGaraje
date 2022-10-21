@@ -3,16 +3,20 @@ package aguilera.code.mantenimientogaraje
 import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentShowVehicleBinding
+import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
 import android.view.*
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale.filter
@@ -102,6 +106,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
                     putString("matricula", matricula)
                     putString("marca", marca)
                     putString("modelo", modelo)
+                    putString("concepto", "")
                 }
                 it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                     .addToBackStack("HistoryFragment").commit()
@@ -149,11 +154,11 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
                         View.VISIBLE else binding?.btnHistory?.visibility = View.INVISIBLE
 
                     //Muestra el boton remember si existe algun registro que recordar
-                    var n=0
+                    var n = 0
                     listF.forEach { concepto ->
-                        if(concepto.recordar) n++
+                        if (concepto.recordar) n++
                     }
-                    if (n>0) binding?.btnRemember?.visibility =
+                    if (n > 0) binding?.btnRemember?.visibility =
                         View.VISIBLE else binding?.btnRemember?.visibility = View.INVISIBLE
                     //---------------------------------------------------------------------
                 }
@@ -190,20 +195,59 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
     }
 
     override fun onConceptClick(concepto: Concepto) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.menu_alert)
+        dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
+        val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
+        val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
+        val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
+        btnHistory.setOnClickListener {
+            newIntent(concepto, "h")
+            dialog.dismiss()
+        }
+        btnEdit.setOnClickListener {
+            newIntent(concepto, "e")
+            dialog.dismiss()
+        }
+        btnDelete.setOnClickListener {
+            newIntent(concepto, "d")
+            dialog.dismiss()
+        }
+        dialog.show()
+
+    }
+
+    fun newIntent(concepto: Concepto, option: String) {
         // opening a new intent and passing a data to it.
-        activity?.let {
-            val fragment = NewConceptVehicleFragment()
-            fragment.arguments = Bundle().apply {
-                putString("type", "Edit")
-                putString("matricula", matricula)
-                putSerializable("concept", concepto as Concepto)
+        when (option) {
+            "h" -> activity?.let {
+                val fragment = HistoryFragment()
+                fragment.arguments = Bundle().apply {
+                    putString("matricula", matricula)
+                    putString("marca", marca)
+                    putString("modelo", modelo)
+                    putString("concepto", concepto.concepto)
+                }
+                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
+                    .addToBackStack("HistoryFragment").commit()
             }
-            it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
-                .addToBackStack("NewConceptVehicleFragment").commit()
+            "e" -> activity?.let {
+                val fragment = NewConceptVehicleFragment()
+                fragment.arguments = Bundle().apply {
+                    putString("type", "Edit")
+                    putString("matricula", matricula)
+                    putSerializable("concept", concepto)
+                }
+                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
+                    .addToBackStack("NewConceptVehicleFragment").commit()
+            }
+            "d" -> onConceptDeleteIconClick(concepto)
         }
     }
 
     fun changeFragmentActionBar() {
-        (activity as MainActivity).changeActionBar("$marca $modelo", "$matricula")
+        (activity as MainActivity).changeActionBar("$marca $modelo", "Conceptos: $matricula")
     }
 }

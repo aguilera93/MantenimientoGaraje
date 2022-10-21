@@ -64,16 +64,6 @@ class NewConceptVehicleFragment : Fragment() {
 
         changeFragmentActionBar()
 
-        //binding?.dpRDate?.visibility = rememberCheck(binding?.cbRecordar?.isChecked)
-
-        /*binding?.cbRecordar?.setOnCheckedChangeListener { buttonView, isChecked ->
-            //binding?.dpRDate?.visibility = rememberCheck(isChecked)
-            if (rememberCheck(isChecked)) {
-                val newFragment: DialogFragment = SelectDateFragment(2)
-                fragmentManager?.let { it1 -> newFragment.show(it1, "DatePicker") }
-            }
-        }*/
-
         binding?.cbRecordar?.setOnClickListener {
             rFechCheck = ""
             if (rememberCheck(binding?.cbRecordar?.isChecked)) {

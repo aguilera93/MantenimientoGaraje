@@ -3,6 +3,7 @@ package aguilera.code.mantenimientogaraje.data.db.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "vehiculos")
 data class Vehiculo(
@@ -25,4 +26,9 @@ data class Vehiculo(
 
     @ColumnInfo(name = "detalles")
     var detalles: String?
-)
+) : Serializable {
+
+    override fun toString(): String {
+        return "$matricula, $marca, $modelo', $kms', $vin, $detalles"
+    }
+}

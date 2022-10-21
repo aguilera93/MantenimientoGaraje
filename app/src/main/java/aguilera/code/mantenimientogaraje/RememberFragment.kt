@@ -166,7 +166,7 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
     }
 
     fun changeFragmentActionBar() {
-        (activity as MainActivity).changeActionBar("$marca $modelo", "$matricula")
+        (activity as MainActivity).changeActionBar("$marca $modelo", "Recordatorios: $matricula")
     }
 
 }

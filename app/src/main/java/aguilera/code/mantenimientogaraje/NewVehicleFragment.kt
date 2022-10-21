@@ -1,5 +1,6 @@
 package aguilera.code.mantenimientogaraje
 
+import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
 import aguilera.code.mantenimientogaraje.data.ui.GarageViewModel
 import aguilera.code.mantenimientogaraje.databinding.FragmentNewVehicleBinding
@@ -18,8 +19,9 @@ class NewVehicleFragment : Fragment() {
     private var binding: FragmentNewVehicleBinding? = null
 
     lateinit var viewModal: GarageViewModel
-
+    var matricula: String = ""
     var edit: Boolean = false
+    lateinit var oldVehicle: Vehiculo
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,8 +42,12 @@ class NewVehicleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val type = arguments?.getString("type")
-        if (type == "Edit") edit = true
+        viewModal = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication())
+        ).get(GarageViewModel::class.java)
+
+        getValues()
 
         setValues()
 
@@ -53,18 +59,27 @@ class NewVehicleFragment : Fragment() {
         changeFragmentActionBar()
     }
 
+    fun getValues() {
+        matricula = arguments?.getString("matricula").toString()
+
+        if (arguments?.getString("type") == "Edit") {
+            edit = true
+            oldVehicle = arguments?.getSerializable("vehiculo") as Vehiculo
+        }
+    }
+
     fun setValues() {
 
         if (edit) {
-            binding?.etMatricula?.setText(arguments?.getString("matricula"))
+            binding?.etMatricula?.setText(matricula)
             //Esconde la vista que contiene el campo de la matricula
             binding?.etMatriculaLay?.visibility = View.GONE
             //------------------------------------------------------
-            binding?.etMarca?.setText(arguments?.getString("marca"))
-            binding?.etModelo?.setText(arguments?.getString("modelo"))
-            binding?.etKMSV?.setText(arguments?.getString("kms"))
-            binding?.etVIN?.setText(arguments?.getString("vin"))
-            binding?.etDetallesV?.setText(arguments?.getString("detalles"))
+            binding?.etMarca?.setText(oldVehicle.marca)
+            binding?.etModelo?.setText(oldVehicle.modelo)
+            binding?.etKMSV?.setText(oldVehicle.kms.toString())
+            binding?.etVIN?.setText(oldVehicle.vin)
+            binding?.etDetallesV?.setText(oldVehicle.detalles)
             binding?.btnSave?.setText(getString(R.string.btn_update))
         } else {
             binding?.btnSave?.setText(getString(R.string.btn_save))

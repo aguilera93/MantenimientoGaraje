@@ -1,5 +1,6 @@
 package aguilera.code.mantenimientogaraje.data.ui
 
+import aguilera.code.mantenimientogaraje.MainFragment
 import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
 import aguilera.code.mantenimientogaraje.databinding.VehicleRvItemBinding
 import android.view.LayoutInflater
@@ -8,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class VehicleAdapter(
     val vehicleDeleteIconClickInterface: VehicleDeleteIconClickInterface,
-    val vehicleClickInterface: VehicleClickInterface
+    val vehicleClickInterface: VehicleClickInterface,
+    val vehicleLongClickInterface: VehicleLongClickInterface
 ) : RecyclerView.Adapter<VehicleViewHolder>() {
 
     private val allVehicles = ArrayList<Vehiculo>()
@@ -36,6 +38,11 @@ class VehicleAdapter(
         holder.itemView.setOnClickListener {
             // call eventClickInterface.onEventClick() and pass position to it.
             vehicleClickInterface.onVehicleClick(allVehicles.get(position))
+        }
+
+        holder.itemView.setOnLongClickListener{
+            vehicleLongClickInterface.onVehicleLongClick(allVehicles.get(position))
+            true
         }
     }
 
@@ -69,6 +76,10 @@ interface VehicleClickInterface {
     // creating a method for click action
     // on recycler view item for updating it.
     fun onVehicleClick(vehiculo: Vehiculo)
+}
+
+interface VehicleLongClickInterface {
+    fun onVehicleLongClick(vehiculo: Vehiculo)
 }
 
 class VehicleViewHolder(val binding: VehicleRvItemBinding) : RecyclerView.ViewHolder(binding.root) {}

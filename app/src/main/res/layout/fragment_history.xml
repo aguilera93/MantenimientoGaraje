@@ -6,31 +6,10 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/menuL"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Historial"
-        android:textColorHint="@color/white"
-        app:hintTextColor="@color/app_dark"
-        app:boxBackgroundColor="@color/app"
-        tools:ignore="MissingConstraints">
-
-        <AutoCompleteTextView
-            android:id="@+id/menu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:inputType="textAutoComplete"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/conceptsRV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
         tools:listitem="@layout/concept_rv_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

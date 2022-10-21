@@ -35,6 +35,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     var matricula = ""
     var marca = ""
     var modelo = ""
+    var concept = ""
     lateinit var listC: List<Concepto>
 
     override fun onCreateView(
@@ -69,6 +70,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         matricula = arguments?.getString("matricula").toString()
         marca = arguments?.getString("marca").toString()
         modelo = arguments?.getString("modelo").toString()
+        concept = arguments?.getString("concepto").toString()
 
         binding?.conceptsRV?.apply {
             setHasFixedSize(true)
@@ -91,7 +93,8 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                         }
 
                     listC = listado
-                    val adapter =
+                    updateList(listC, concept)
+                    /*val adapter =
                         context?.let { it1 -> ArrayAdapter(it1, R.layout.list_item, listConcept) }
                     binding?.menu?.setAdapter(adapter)
                     //Auto selleccion del historial de conceptos------
@@ -112,7 +115,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
 
                     binding?.menu?.setOnItemClickListener { adapterView, view, i, l ->
                         updateList(listC, listConcept.get(i))
-                    }
+                    }*/
                 }
             })
         }
@@ -120,16 +123,30 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     }
 
     private fun updateList(list: List<Concepto>, con: String) {
-        var listF = list.sortedByDescending {
-            LocalDate.parse(
-                it.fecha.toString(),
-                DateTimeFormatter.ofPattern("d/M/y")
-            )
-        }
-            .filter {
-                it.matricula == matricula && it.concepto == con
+        if (con.length > 0) {
+            var listF = list.sortedByDescending {
+                LocalDate.parse(
+                    it.fecha.toString(),
+                    DateTimeFormatter.ofPattern("d/M/y")
+                )
             }
-        conceptHistoryAdapter.updateList(listF)
+                .filter {
+                    it.matricula == matricula && it.concepto == con
+                }
+            conceptHistoryAdapter.updateList(listF)
+        } else {
+            var listF = list.sortedByDescending {
+                LocalDate.parse(
+                    it.fecha.toString(),
+                    DateTimeFormatter.ofPattern("d/M/y")
+                )
+            }
+                .filter {
+                    it.matricula == matricula
+                }
+            conceptHistoryAdapter.updateList(listF)
+        }
+
     }
 
     override fun onConceptDeleteIconClick(concepto: Concepto) {
@@ -193,7 +210,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     }
 
     fun changeFragmentActionBar() {
-        (activity as MainActivity).changeActionBar("$marca $modelo", "$matricula")
+        (activity as MainActivity).changeActionBar("$marca $modelo", "Historial: $matricula")
     }
 
 }

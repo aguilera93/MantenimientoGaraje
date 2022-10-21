@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/gradient.xml" value="0.1575" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_add.xml" value="0.1575" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_edit.xml" value="0.1575" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_key.xml" value="0.1575" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_remember.xml" value="0.1575" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_settings.xml" value="0.1575" />
@@ -22,6 +23,7 @@
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/fragment_remember.xml" value="0.19655797101449277" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/fragment_show_vehicle.xml" value="0.17119565217391305" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/list_item.xml" value="0.19655797101449277" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/menu_alert.xml" value="0.19655797101449277" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/remember_rv_item.xml" value="0.19655797101449277" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/vehicle_rv_item.xml" value="0.17119565217391305" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/menu/main_menu.xml" value="0.19895833333333332" />
