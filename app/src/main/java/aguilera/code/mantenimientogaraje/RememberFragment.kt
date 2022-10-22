@@ -3,22 +3,27 @@ package aguilera.code.mantenimientogaraje
 import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentRememberBinding
+import android.app.Dialog
+import android.content.ClipData.newIntent
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class RememberFragment : Fragment(), ConceptRememberClickInterface,
-    ConceptRememberDeleteIconClickInterface {
+    ConceptRememberMenuIconClickInterface {
 
     private lateinit var viewModel: GarageViewModel
     private lateinit var conceptRememberAdapter: ConceptRememberAdapter
@@ -106,7 +111,33 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
         conceptRememberAdapter.updateList(listF)
     }
 
-    override fun onConceptDeleteIconClick(concepto: Concepto) {
+    override fun onConceptMenuIconClick(concepto: Concepto) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.menu_alert)
+        dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
+        //val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
+        val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
+        val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
+        /*btnHistory.setOnClickListener {
+            newIntent(concepto, "h")
+            dialog.dismiss()
+        }*/
+        (dialog.findViewById(R.id.btn_history) as FloatingActionButton).visibility = View.GONE
+        (dialog.findViewById(R.id.txt_history) as TextView).visibility=View.GONE
+        btnEdit.setOnClickListener {
+            //newIntent(concepto, "e")
+            dialog.dismiss()
+        }
+        btnDelete.setOnClickListener {
+            newIntent(concepto, "d")
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    fun delete(concepto: Concepto) {
         val dialogBuilder = AlertDialog.Builder(requireContext())
         @Suppress("DEPRECATION")
         dialogBuilder.setMessage(
@@ -163,6 +194,34 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
         val alert = dialogBuilder.create()
         alert.setTitle("${concepto.concepto}")
         alert.show()
+    }
+
+    fun newIntent(concepto: Concepto, option: String) {
+        // opening a new intent and passing a data to it.
+        when (option) {
+            "h" -> activity?.let {
+                val fragment = HistoryFragment()
+                fragment.arguments = Bundle().apply {
+                    putString("matricula", matricula)
+                    putString("marca", marca)
+                    putString("modelo", modelo)
+                    putString("concepto", concepto.concepto)
+                }
+                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
+                    .addToBackStack("HistoryFragment").commit()
+            }
+            "e" -> activity?.let {
+                val fragment = NewConceptVehicleFragment()
+                fragment.arguments = Bundle().apply {
+                    putString("type", "Edit")
+                    putString("matricula", matricula)
+                    putSerializable("concept", concepto)
+                }
+                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
+                    .addToBackStack("NewConceptVehicleFragment").commit()
+            }
+            "d" -> delete(concepto)
+        }
     }
 
     fun changeFragmentActionBar() {

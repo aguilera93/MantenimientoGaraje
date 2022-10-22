@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class ConceptHistoryAdapter(
-    val conceptHistoryDeleteIconClickInterface: ConceptHistoryDeleteIconClickInterface,
+    val conceptHistoryMenuIconClickInterface: ConceptHistoryMenuIconClickInterface,
     val conceptHistoryClickInterface: ConceptHistoryClickInterface
 ) : RecyclerView.Adapter<ConceptHistoryViewHolder>() {
 
@@ -28,9 +28,9 @@ class ConceptHistoryAdapter(
         holder.binding.tvDescription.text = "${allConcepts.get(position).fecha}"
 
         // adding click listener to our delete image view icon.
-        holder.binding.imgDelete.setOnClickListener {
+        holder.binding.imgMenu.setOnClickListener {
             // call eventDeleteIconClickInterface.onEventDeleteIconClick() and pass position to it.
-            conceptHistoryDeleteIconClickInterface.onConceptDeleteIconClick(allConcepts.get(position))
+            conceptHistoryMenuIconClickInterface.onConceptMenuIconClick(allConcepts.get(position))
         }
 
         // adding click listener to our recycler view item.
@@ -59,10 +59,10 @@ class ConceptHistoryAdapter(
     }
 }
 
-interface ConceptHistoryDeleteIconClickInterface {
+interface ConceptHistoryMenuIconClickInterface {
     // creating a method for click
     // action on delete image view.
-    fun onConceptDeleteIconClick(concepto: Concepto)
+    fun onConceptMenuIconClick(concepto: Concepto)
 }
 
 interface ConceptHistoryClickInterface {

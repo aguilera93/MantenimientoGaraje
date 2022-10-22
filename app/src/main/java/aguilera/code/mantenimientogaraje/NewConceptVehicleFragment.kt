@@ -107,7 +107,7 @@ class NewConceptVehicleFragment : Fragment() {
             // setting data.
             binding?.etConcepto?.setText(oldConcept.concepto)
             //Esconde la vista que contiene el campo del concepto
-            binding?.etConceptoLay?.visibility = View.GONE
+            binding?.etConceptoLay?.isEnabled = false
             //---------------------------------------------------
             binding?.etFecha?.setText(oldConcept.fecha)
             binding?.etPrecio?.setText(if (oldConcept.precio == null) "" else oldConcept.precio.toString())
@@ -212,12 +212,12 @@ class NewConceptVehicleFragment : Fragment() {
     fun changeFragmentActionBar() {
         if (edit) {
             (activity as MainActivity).changeActionBar(
-                //"Modificar ${binding?.etConcepto?.text.toString()}",
-                "${binding?.etConcepto?.text.toString()}",
+                //"${binding?.etConcepto?.text.toString()}",
+                "Modificar Concepto",
                 "$matricula"
             )
         } else {
-            //(activity as MainActivity).changeActionBar("Añadir Concepto", "$matricula")
+            (activity as MainActivity).changeActionBar("Añadir Concepto", "$matricula")
         }
     }
 

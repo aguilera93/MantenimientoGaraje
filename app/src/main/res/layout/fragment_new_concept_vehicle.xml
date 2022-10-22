@@ -174,17 +174,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etTallerLay"
         tools:ignore="MissingConstraints" />
-<!--
-    <DatePicker
-        android:id="@+id/dpRDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:calendarViewShown="false"
-        android:datePickerMode="spinner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etTallerLay" />
--->
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSave"
         style="@style/Widget.MaterialComponents.Button"

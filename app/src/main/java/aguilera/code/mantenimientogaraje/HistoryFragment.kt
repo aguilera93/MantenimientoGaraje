@@ -4,6 +4,8 @@ import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentHistoryBinding
 import android.app.Activity
+import android.app.Dialog
+import android.content.ClipData.newIntent
 import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
@@ -12,7 +14,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -21,11 +25,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
-    ConceptHistoryDeleteIconClickInterface {
+    ConceptHistoryMenuIconClickInterface {
 
     private lateinit var viewModel: GarageViewModel
     private lateinit var conceptHistoryAdapter: ConceptHistoryAdapter
@@ -94,28 +99,6 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
 
                     listC = listado
                     updateList(listC, concept)
-                    /*val adapter =
-                        context?.let { it1 -> ArrayAdapter(it1, R.layout.list_item, listConcept) }
-                    binding?.menu?.setAdapter(adapter)
-                    //Auto selleccion del historial de conceptos------
-                    //Selecciono el primer concepto
-                    binding?.menu?.setText(listConcept[0], false)
-                    //actualizo el listado con el primer concepto
-                    updateList(listC, listConcept[0])
-                    //------------------------------------------------
-
-                    //Solucion al problema de padding para AutoCompleteTextView(menu)
-                    binding?.menu?.setDropDownBackgroundDrawable(context?.let { it1 ->
-                        ContextCompat.getDrawable(
-                            it1,
-                            R.color.app
-                        )
-                    })
-                    //---------------------------------------------------------
-
-                    binding?.menu?.setOnItemClickListener { adapterView, view, i, l ->
-                        updateList(listC, listConcept.get(i))
-                    }*/
                 }
             })
         }
@@ -123,7 +106,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     }
 
     private fun updateList(list: List<Concepto>, con: String) {
-        if (con.length > 0) {
+        //if (con.length > 0) {
             var listF = list.sortedByDescending {
                 LocalDate.parse(
                     it.fecha.toString(),
@@ -134,7 +117,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                     it.matricula == matricula && it.concepto == con
                 }
             conceptHistoryAdapter.updateList(listF)
-        } else {
+        /*} else {
             var listF = list.sortedByDescending {
                 LocalDate.parse(
                     it.fecha.toString(),
@@ -145,11 +128,37 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                     it.matricula == matricula
                 }
             conceptHistoryAdapter.updateList(listF)
-        }
+        }*/
 
     }
 
-    override fun onConceptDeleteIconClick(concepto: Concepto) {
+    override fun onConceptMenuIconClick(concepto: Concepto) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.menu_alert)
+        dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
+        //val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
+        val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
+        val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
+        /*btnHistory.setOnClickListener {
+            newIntent(concepto, "h")
+            dialog.dismiss()
+        }*/
+        (dialog.findViewById(R.id.btn_history) as FloatingActionButton).visibility = View.GONE
+        (dialog.findViewById(R.id.txt_history) as TextView).visibility=View.GONE
+        btnEdit.setOnClickListener {
+            //newIntent(concepto, "e")
+            dialog.dismiss()
+        }
+        btnDelete.setOnClickListener {
+            newIntent(concepto, "d")
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    fun delete(concepto: Concepto) {
         val dialogBuilder = AlertDialog.Builder(requireContext())
         @Suppress("DEPRECATION")
         dialogBuilder.setMessage(
@@ -196,21 +205,40 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                     "${getString(R.string.price)}: $precio\n" +
                     "${getString(R.string.details)}: $detalles"
         )
-        // if the dialog is cancelable
-        /*.setCancelable(false)
-        .setPositiveButton("Ok", DialogInterface.OnClickListener {
-                dialog, id ->
-            dialog.dismiss()
-
-        })*/
-
         val alert = dialogBuilder.create()
         alert.setTitle("${concepto.concepto}")
         alert.show()
     }
 
+    fun newIntent(concepto: Concepto, option: String) {
+        // opening a new intent and passing a data to it.
+        when (option) {
+            "h" -> activity?.let {
+                val fragment = HistoryFragment()
+                fragment.arguments = Bundle().apply {
+                    putString("matricula", matricula)
+                    putString("marca", marca)
+                    putString("modelo", modelo)
+                    putString("concepto", concepto.concepto)
+                }
+                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
+                    .addToBackStack("HistoryFragment").commit()
+            }
+            "e" -> activity?.let {
+                val fragment = NewConceptVehicleFragment()
+                fragment.arguments = Bundle().apply {
+                    putString("type", "Edit")
+                    putString("matricula", matricula)
+                    putSerializable("concept", concepto)
+                }
+                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
+                    .addToBackStack("NewConceptVehicleFragment").commit()
+            }
+            "d" -> delete(concepto)
+        }
+    }
+
     fun changeFragmentActionBar() {
         (activity as MainActivity).changeActionBar("$marca $modelo", "Historial: $matricula")
     }
-
 }

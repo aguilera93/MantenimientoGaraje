@@ -73,11 +73,11 @@ class NewVehicleFragment : Fragment() {
         if (edit) {
             binding?.etMatricula?.setText(matricula)
             //Esconde la vista que contiene el campo de la matricula
-            binding?.etMatriculaLay?.visibility = View.GONE
+            binding?.etMatriculaLay?.isEnabled = false
             //------------------------------------------------------
             binding?.etMarca?.setText(oldVehicle.marca)
             binding?.etModelo?.setText(oldVehicle.modelo)
-            binding?.etKMSV?.setText(oldVehicle.kms.toString())
+            binding?.etKMSV?.setText(if (oldVehicle.kms == null) "" else oldVehicle.kms.toString())
             binding?.etVIN?.setText(oldVehicle.vin)
             binding?.etDetallesV?.setText(oldVehicle.detalles)
             binding?.btnSave?.setText(getString(R.string.btn_update))
@@ -118,8 +118,8 @@ class NewVehicleFragment : Fragment() {
     fun changeFragmentActionBar() {
         if (edit) {
             (activity as MainActivity).changeActionBar(
-                getString(R.string.edit_vehicle),
-                "${binding?.etMatricula?.text.toString()}"
+                getString(R.string.edit_vehicle),""
+                //"${binding?.etMatricula?.text.toString()}"
             )
         } else {
             (activity as MainActivity).changeActionBar(getString(R.string.add_vehicle), "")

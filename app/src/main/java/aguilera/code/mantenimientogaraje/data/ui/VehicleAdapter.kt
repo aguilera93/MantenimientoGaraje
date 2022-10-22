@@ -8,9 +8,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class VehicleAdapter(
-    val vehicleDeleteIconClickInterface: VehicleDeleteIconClickInterface,
-    val vehicleClickInterface: VehicleClickInterface,
-    val vehicleLongClickInterface: VehicleLongClickInterface
+    val vehicleMenuIconClickInterface: VehicleMenuIconClickInterface,
+    val vehicleClickInterface: VehicleClickInterface
 ) : RecyclerView.Adapter<VehicleViewHolder>() {
 
     private val allVehicles = ArrayList<Vehiculo>()
@@ -29,20 +28,15 @@ class VehicleAdapter(
         holder.binding.tvDescription.text = "${allVehicles.get(position).matricula}"
 
         // adding click listener to our delete image view icon.
-        holder.binding.imgDelete.setOnClickListener {
+        holder.binding.imgMenu.setOnClickListener {
             // call eventDeleteIconClickInterface.onEventDeleteIconClick() and pass position to it.
-            vehicleDeleteIconClickInterface.onVehicleDeleteIconClick(allVehicles.get(position))
+            vehicleMenuIconClickInterface.onVehicleMenuIconClick(allVehicles.get(position))
         }
 
         // adding click listener to our recycler view item.
         holder.itemView.setOnClickListener {
             // call eventClickInterface.onEventClick() and pass position to it.
             vehicleClickInterface.onVehicleClick(allVehicles.get(position))
-        }
-
-        holder.itemView.setOnLongClickListener{
-            vehicleLongClickInterface.onVehicleLongClick(allVehicles.get(position))
-            true
         }
     }
 
@@ -66,20 +60,16 @@ class VehicleAdapter(
     }
 }
 
-interface VehicleDeleteIconClickInterface {
+interface VehicleMenuIconClickInterface {
     // creating a method for click
     // action on delete image view.
-    fun onVehicleDeleteIconClick(vehiculo: Vehiculo)
+    fun onVehicleMenuIconClick(vehiculo: Vehiculo)
 }
 
 interface VehicleClickInterface {
     // creating a method for click action
     // on recycler view item for updating it.
     fun onVehicleClick(vehiculo: Vehiculo)
-}
-
-interface VehicleLongClickInterface {
-    fun onVehicleLongClick(vehiculo: Vehiculo)
 }
 
 class VehicleViewHolder(val binding: VehicleRvItemBinding) : RecyclerView.ViewHolder(binding.root) {}

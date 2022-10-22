@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale.filter
 
-class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIconClickInterface {
+class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconClickInterface {
 
     private lateinit var viewModel: GarageViewModel
     private lateinit var conceptAdapter: ConceptAdapter
@@ -70,7 +70,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
                 // navigate to settings screen
                 true
             }
-            R.id.action_edit -> {
+            R.id.action_clear -> {
                 // edit vehicle
                 true
             }
@@ -150,8 +150,8 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
                         .filter { it.matricula == matricula && it.visible }
                     conceptAdapter.updateList(listF)
 
-                    if (listF.size > 0) binding?.btnHistory?.visibility =
-                        View.VISIBLE else binding?.btnHistory?.visibility = View.INVISIBLE
+                    /*if (listF.size > 0) binding?.btnHistory?.visibility =
+                        View.VISIBLE else binding?.btnHistory?.visibility = View.INVISIBLE*/
 
                     //Muestra el boton remember si existe algun registro que recordar
                     var n = 0
@@ -167,7 +167,31 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
 
     }
 
-    override fun onConceptDeleteIconClick(concepto: Concepto) {
+    override fun onConceptMenuIconClick(concepto: Concepto) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.menu_alert)
+        dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
+        val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
+        val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
+        val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
+        btnHistory.setOnClickListener {
+            newIntent(concepto, "h")
+            dialog.dismiss()
+        }
+        btnEdit.setOnClickListener {
+            newIntent(concepto, "e")
+            dialog.dismiss()
+        }
+        btnDelete.setOnClickListener {
+            newIntent(concepto, "d")
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    fun delete(concepto: Concepto) {
         val dialogBuilder = AlertDialog.Builder(requireContext())
         @Suppress("DEPRECATION")
         dialogBuilder.setMessage(
@@ -195,28 +219,25 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
     }
 
     override fun onConceptClick(concepto: Concepto) {
-        val dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.menu_alert)
-        dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
-        val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
-        val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
-        val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
-        btnHistory.setOnClickListener {
-            newIntent(concepto, "h")
-            dialog.dismiss()
-        }
-        btnEdit.setOnClickListener {
-            newIntent(concepto, "e")
-            dialog.dismiss()
-        }
-        btnDelete.setOnClickListener {
-            newIntent(concepto, "d")
-            dialog.dismiss()
-        }
-        dialog.show()
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        var taller = concepto.taller
+        if (taller == "null" || taller?.length == 0) taller = "-"
 
+        var precio = concepto.precio.toString()
+        if (precio == "null" || precio?.length == 0) precio = "-" else precio += "€"
+
+        var detalles = concepto.detalles
+        if (detalles == "null" || detalles?.length == 0) detalles = "-"
+
+        dialogBuilder.setMessage(
+            "${getString(R.string.date)}: ${concepto.fecha}\n" +
+                    "${getString(R.string.taller)}: $taller\n" +
+                    "${getString(R.string.price)}: $precio\n" +
+                    "${getString(R.string.details)}: $detalles"
+        )
+        val alert = dialogBuilder.create()
+        alert.setTitle("${concepto.concepto}")
+        alert.show()
     }
 
     fun newIntent(concepto: Concepto, option: String) {
@@ -243,7 +264,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptDeleteIcon
                 it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                     .addToBackStack("NewConceptVehicleFragment").commit()
             }
-            "d" -> onConceptDeleteIconClick(concepto)
+            "d" -> delete(concepto)
         }
     }
 

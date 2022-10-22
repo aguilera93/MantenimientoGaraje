@@ -10,6 +10,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
 import android.view.*
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -18,7 +19,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainFragment : Fragment(), VehicleClickInterface, VehicleLongClickInterface, VehicleDeleteIconClickInterface {
+class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInterface {
 
     private lateinit var viewModel: GarageViewModel
     private lateinit var vehicleAdapter: VehicleAdapter
@@ -43,7 +44,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleLongClickInterfac
             AndroidViewModelFactory.getInstance(requireActivity().getApplication())
         ).get(GarageViewModel::class.java)
 
-        vehicleAdapter = VehicleAdapter(this, this, this)
+        vehicleAdapter = VehicleAdapter(this, this)
 
         initView()
         observeEvents()
@@ -102,12 +103,15 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleLongClickInterfac
         }
     }
 
-    override fun onVehicleDeleteIconClick(vehiculo: Vehiculo) {
+    fun delete(vehiculo: Vehiculo) {
         val dialogBuilder = AlertDialog.Builder(requireContext())
         @Suppress("DEPRECATION")
         dialogBuilder.setMessage(
-            Html.fromHtml("${getString(R.string.que_delete)} " +
-                    "''<b>${vehiculo.marca} ${vehiculo.modelo} - ${vehiculo.matricula}</b>''?"))
+            Html.fromHtml(
+                "${getString(R.string.que_delete)} " +
+                        "''<b>${vehiculo.marca} ${vehiculo.modelo} - ${vehiculo.matricula}</b>''?"
+            )
+        )
             // if the dialog is cancelable
             .setCancelable(true)
             .setPositiveButton(
@@ -143,19 +147,21 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleLongClickInterfac
         }
     }
 
-    override fun onVehicleLongClick(vehiculo: Vehiculo) {
+    override fun onVehicleMenuIconClick(vehiculo: Vehiculo) {
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.menu_alert)
         dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
-        val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
+        //val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
         val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
         val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
-        btnHistory.setOnClickListener {
-            newIntent(vehiculo, "h")
-            dialog.dismiss()
-        }
+        /*btnHistory.setOnClickListener {
+             newIntent(vehiculo, "h")
+             dialog.dismiss()
+         }*/
+        (dialog.findViewById(R.id.btn_history) as FloatingActionButton).visibility = View.GONE
+        (dialog.findViewById(R.id.txt_history) as TextView).visibility=View.GONE
         btnEdit.setOnClickListener {
             newIntent(vehiculo, "e")
             dialog.dismiss()
@@ -191,7 +197,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleLongClickInterfac
                 it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                     .addToBackStack("NewVehicleFragment").commit()
             }
-            "d" -> onVehicleDeleteIconClick(vehiculo)
+            "d" -> delete(vehiculo)
         }
     }
 
