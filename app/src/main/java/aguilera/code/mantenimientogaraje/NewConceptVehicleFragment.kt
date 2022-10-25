@@ -106,7 +106,7 @@ class NewConceptVehicleFragment : Fragment() {
         if (edit) {
             // setting data.
             binding?.etConcepto?.setText(oldConcept.concepto)
-            //Esconde la vista que contiene el campo del concepto
+            //Deshabilita la vista que contiene el campo del concepto
             binding?.etConceptoLay?.isEnabled = false
             //---------------------------------------------------
             binding?.etFecha?.setText(oldConcept.fecha)
@@ -115,7 +115,6 @@ class NewConceptVehicleFragment : Fragment() {
             binding?.etTaller?.setText(oldConcept.taller)
             binding?.etDetallesC?.setText(oldConcept.detalles)
             binding?.cbRecordar?.isChecked = oldConcept.recordar
-            //if (oldConcept.rFecha?.isEmpty() == false) oldConcept.rFecha?.let { setRFech(it) }
             if (oldConcept.rFecha?.isEmpty() == false) rFechCheck =
                 oldConcept.rFecha?.toString().toString()
             binding?.cbRecordar?.setText("Recordar: ${oldConcept.rFecha}")
@@ -220,52 +219,6 @@ class NewConceptVehicleFragment : Fragment() {
             (activity as MainActivity).changeActionBar("Añadir Concepto", "$matricula")
         }
     }
-
-    /*fun getRFech(): String {
-        val day: Int? = binding?.dpRDate?.getDayOfMonth()
-        val month: Int? = binding?.dpRDate?.getMonth()
-        val year: Int? = binding?.dpRDate?.getYear()
-
-        //setCalendarEvent("$day/$month/$year")
-
-        return "$day/$month/$year"
-    }*/
-
-    fun setCalendarEvent(dateStart: String) {
-        val event = ContentValues()
-        event.put(Events.CALENDAR_ID, 1)
-
-        event.put(Events.TITLE, "PRUEBA")
-        event.put(Events.DESCRIPTION, "DESCRIPCION")
-        //event.put(Events.EVENT_LOCATION, location)
-
-        event.put(Events.DTSTART, System.currentTimeMillis())
-        event.put(Events.RRULE, "FREQ=YEARLY")
-        event.put(Events.ALL_DAY, 0) // 0 for false, 1 for true
-        event.put(Events.HAS_ALARM, 1) // 0 for false, 1 for true
-
-        val timeZone = TimeZone.getDefault().id
-        event.put(Events.EVENT_TIMEZONE, timeZone)
-
-        val baseUri: Uri
-        baseUri = if (Build.VERSION.SDK_INT >= 8) {
-            Uri.parse("content://com.android.calendar/events")
-        } else {
-            Uri.parse("content://calendar/events")
-        }
-
-        requireContext().contentResolver.insert(baseUri, event)
-    }
-
-    /*fun setRFech(rFech: String) {
-        var fecha = rFech
-        val day: Int = fecha.substring(0, fecha.indexOf("/")).toInt()
-        fecha = fecha.substring(fecha.indexOf("/") + 1)
-        val month: Int = fecha.substring(0, fecha.indexOf("/")).toInt()
-        fecha = fecha.substring(fecha.indexOf("/") + 1)
-        val year: Int = fecha.toInt()
-        binding?.dpRDate?.updateDate(year, month, day)
-    }*/
 
     fun compareFech(oldFech: String, newFech: String): Boolean {
         var d1 = LocalDate.parse("$oldFech", DateTimeFormatter.ofPattern("d/M/y"))

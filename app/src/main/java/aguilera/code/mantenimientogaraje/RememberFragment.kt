@@ -33,7 +33,7 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
     var matricula = ""
     var marca = ""
     var modelo = ""
-    lateinit var listC: List<Concepto>
+    //lateinit var listC: List<Concepto>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,55 +77,63 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
     }
 
     private fun observeEvents() {
+        updateList()
+    }
+
+    private fun updateList() {
         activity?.let {
             viewModel.allConcepts.observe(it, Observer { list ->
                 list?.let { listado ->
                     // updates the list.
-                    //conceptAdapter.updateList(it)
-                    //Filtrado segun matricula y muestra solo ultimo registro del concepto si tiene que ser recordado
-                    var listF = listado.sortedByDescending {
+                    val listC = arrayListOf<Concepto>()
+                    listado.sortedByDescending {
                         LocalDate.parse(
                             it.fecha.toString(),
                             DateTimeFormatter.ofPattern("d/M/y")
                         )
                     }
-                        .filter { it.matricula == matricula && it.visible && it.recordar}
-                    conceptRememberAdapter.updateList(listF)
-                    listC=listF
+                        .filter { it.matricula == matricula && it.visible && it.recordar }
+                        .forEach { c ->
+                            listC.add(c)
+                        }
+                    conceptRememberAdapter.updateList(listC)
+                    if (listC.isEmpty()) activity?.supportFragmentManager?.popBackStack()
                 }
             })
         }
-
     }
 
-    private fun updateList(list: List<Concepto>, con: String) {
-        var listF = list.sortedByDescending {
-            LocalDate.parse(
-                it.fecha.toString(),
-                DateTimeFormatter.ofPattern("d/M/y")
-            )
-        }
-            .filter {
-                it.matricula == matricula && it.concepto == con
-            }
-        conceptRememberAdapter.updateList(listF)
-    }
-
-    override fun onConceptMenuIconClick(concepto: Concepto) {
+    override fun onConceptClick(concepto: Concepto) {
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.menu_alert)
         dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
-        //val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
+        var taller = concepto.taller
+        if (taller == "null" || taller?.length == 0) taller = "-"
+
+        var precio = concepto.precio.toString()
+        if (precio == "null" || precio?.length == 0) precio = "-" else precio += "€"
+
+        var detalles = concepto.detalles
+        if (detalles == "null" || detalles?.length == 0) detalles = "-"
+        val txtDetails = dialog.findViewById(R.id.txtDetails) as TextView
+        txtDetails.setText(
+            "${concepto.concepto}\n" +
+                    "${getString(R.string.date)}: ${concepto.fecha}\n" +
+                    "${getString(R.string.taller)}: $taller\n" +
+                    "${getString(R.string.price)}: $precio\n" +
+                    "${getString(R.string.details)}: $detalles"
+        )
+        val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
         val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
         val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
         /*btnHistory.setOnClickListener {
             newIntent(concepto, "h")
             dialog.dismiss()
         }*/
-        (dialog.findViewById(R.id.btn_history) as FloatingActionButton).visibility = View.GONE
-        (dialog.findViewById(R.id.txt_history) as TextView).visibility=View.GONE
+        btnHistory.visibility = View.GONE
+        (dialog.findViewById(R.id.txt_history) as TextView).visibility = View.GONE
         btnEdit.setOnClickListener {
             //newIntent(concepto, "e")
             dialog.dismiss()
@@ -151,10 +159,7 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
                     viewModel.clearRememberConceptByUpdate(concepto)
                     (activity as MainActivity).toast("${concepto.concepto} ${getString(R.string.deleted)}")
                     dialog.dismiss()
-                    //Actualizacion del listado tras el borrado de un concepto
-                    listC = listC.filter { it.id_concept != concepto.id_concept }
-                    updateList(listC, concepto.concepto)
-                    //----------------------------------------------------------------------
+                    updateList()
                 })
         dialogBuilder.setNegativeButton("${getString(R.string.cancel)}",
             DialogInterface.OnClickListener { dialog, id ->
@@ -166,8 +171,8 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
         alert.show()
     }
 
-    override fun onConceptClick(concepto: Concepto) {
-        val dialogBuilder = AlertDialog.Builder(requireContext())
+    override fun onConceptMenuIconClick(concepto: Concepto) {
+        /*val dialogBuilder = AlertDialog.Builder(requireContext())
         var taller = concepto.taller
         if (taller == "null" || taller?.length == 0) taller = "-"
 
@@ -183,17 +188,9 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
                     "${getString(R.string.price)}: $precio\n" +
                     "${getString(R.string.details)}: $detalles"
         )
-        // if the dialog is cancelable
-        /*.setCancelable(false)
-        .setPositiveButton("Ok", DialogInterface.OnClickListener {
-                dialog, id ->
-            dialog.dismiss()
-
-        })*/
-
         val alert = dialogBuilder.create()
         alert.setTitle("${concepto.concepto}")
-        alert.show()
+        alert.show()*/
     }
 
     fun newIntent(concepto: Concepto, option: String) {

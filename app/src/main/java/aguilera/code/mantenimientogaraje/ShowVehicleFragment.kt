@@ -4,6 +4,7 @@ import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentShowVehicleBinding
 import android.app.Dialog
+import android.content.ClipData.newIntent
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
@@ -138,8 +139,6 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
         activity?.let {
             viewModel.allConcepts.observe(it, Observer { list ->
                 list?.let { listado ->
-                    // updates the list.
-                    //conceptAdapter.updateList(it)
                     //Filtrado segun matricula y muestra solo ultimo registro del concepto
                     var listF = listado.sortedByDescending {
                         LocalDate.parse(
@@ -150,10 +149,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
                         .filter { it.matricula == matricula && it.visible }
                     conceptAdapter.updateList(listF)
 
-                    /*if (listF.size > 0) binding?.btnHistory?.visibility =
-                        View.VISIBLE else binding?.btnHistory?.visibility = View.INVISIBLE*/
-
-                    //Muestra el boton remember si existe algun registro que recordar
+                    //Muestra el boton remember si existe algun registro que recordar------
                     var n = 0
                     listF.forEach { concepto ->
                         if (concepto.recordar) n++
@@ -167,12 +163,28 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
 
     }
 
-    override fun onConceptMenuIconClick(concepto: Concepto) {
+    override fun onConceptClick(concepto: Concepto) {
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.menu_alert)
         dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
+        var taller = concepto.taller
+        if (taller == "null" || taller?.length == 0) taller = "-"
+
+        var precio = concepto.precio.toString()
+        if (precio == "null" || precio?.length == 0) precio = "-" else precio += "€"
+
+        var detalles = concepto.detalles
+        if (detalles == "null" || detalles?.length == 0) detalles = "-"
+        val txtDetails = dialog.findViewById(R.id.txtDetails) as TextView
+        txtDetails.setText(
+            "${concepto.concepto}\n" +
+                    "${getString(R.string.date)}: ${concepto.fecha}\n" +
+                    "${getString(R.string.taller)}: $taller\n" +
+                    "${getString(R.string.price)}: $precio\n" +
+                    "${getString(R.string.details)}: $detalles"
+        )
         val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
         val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
         val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
@@ -218,8 +230,8 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
 
     }
 
-    override fun onConceptClick(concepto: Concepto) {
-        val dialogBuilder = AlertDialog.Builder(requireContext())
+    override fun onConceptMenuIconClick(concepto: Concepto) {
+        /*val dialogBuilder = AlertDialog.Builder(requireContext())
         var taller = concepto.taller
         if (taller == "null" || taller?.length == 0) taller = "-"
 
@@ -237,7 +249,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
         )
         val alert = dialogBuilder.create()
         alert.setTitle("${concepto.concepto}")
-        alert.show()
+        alert.show()*/
     }
 
     fun newIntent(concepto: Concepto, option: String) {

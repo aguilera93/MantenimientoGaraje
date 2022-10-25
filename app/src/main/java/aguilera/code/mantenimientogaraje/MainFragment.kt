@@ -132,9 +132,8 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
 
     }
 
-
-    override fun onVehicleClick(vehiculo: Vehiculo) {
-        // opening a new intent and passing a data to it.
+    override fun onVehicleMenuIconClick(vehiculo: Vehiculo) {
+        /*// opening a new intent and passing a data to it.
         activity?.let {
             val fragment = ShowVehicleFragment()
             fragment.arguments = Bundle().apply {
@@ -144,24 +143,25 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
             }
             it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                 .addToBackStack("ShowVehicleFragment").commit()
-        }
+        }*/
     }
 
-    override fun onVehicleMenuIconClick(vehiculo: Vehiculo) {
+    override fun onVehicleClick(vehiculo: Vehiculo) {
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.menu_alert)
         dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
-        //val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
+        val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
         val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
         val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
-        /*btnHistory.setOnClickListener {
-             newIntent(vehiculo, "h")
-             dialog.dismiss()
-         }*/
-        (dialog.findViewById(R.id.btn_history) as FloatingActionButton).visibility = View.GONE
-        (dialog.findViewById(R.id.txt_history) as TextView).visibility=View.GONE
+        val txtDetails = dialog.findViewById(R.id.txtDetails) as TextView
+        txtDetails.visibility = View.GONE
+        dialog.findViewById<TextView>(R.id.txt_history).setText(R.string.concepts)
+        btnHistory.setOnClickListener {
+            newIntent(vehiculo, "h")
+            dialog.dismiss()
+        }
         btnEdit.setOnClickListener {
             newIntent(vehiculo, "e")
             dialog.dismiss()
@@ -177,15 +177,14 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
         // opening a new intent and passing a data to it.
         when (option) {
             "h" -> activity?.let {
-                val fragment = HistoryFragment()
+                val fragment = ShowVehicleFragment()
                 fragment.arguments = Bundle().apply {
                     putString("matricula", vehiculo.matricula)
                     putString("marca", vehiculo.marca)
                     putString("modelo", vehiculo.modelo)
-                    putString("concepto", "")
                 }
                 it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
-                    .addToBackStack("HistoryFragment").commit()
+                    .addToBackStack("ShowVehicleFragment").commit()
             }
             "e" -> activity?.let {
                 val fragment = NewVehicleFragment()
@@ -200,7 +199,6 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
             "d" -> delete(vehiculo)
         }
     }
-
 
     fun changeFragmentActionBar() {
         (activity as MainActivity).changeActionBar(getString(R.string.vehicle_list_title), "")

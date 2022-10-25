@@ -3,24 +3,23 @@ package aguilera.code.mantenimientogaraje
 import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentHistoryBinding
-import android.app.Activity
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.ClipData.newIntent
 import android.content.DialogInterface
-import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.ArrayAdapter
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -41,7 +40,6 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     var marca = ""
     var modelo = ""
     var concept = ""
-    lateinit var listC: List<Concepto>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,67 +84,63 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     }
 
     private fun observeEvents() {
+        updateList()
+    }
+
+    private fun updateList() {
         activity?.let {
             viewModel.allConcepts.observe(it, Observer { list ->
                 list?.let { listado ->
                     // updates the list.
-                    val listConcept = arrayListOf<String>()
-                    listado.sortedBy { it.concepto }
-                        .filter { it.matricula == matricula && it.visible }
+                    val listC = arrayListOf<Concepto>()
+                    listado.sortedByDescending {
+                        LocalDate.parse(
+                            it.fecha.toString(),
+                            DateTimeFormatter.ofPattern("d/M/y")
+                        )
+                    }
+                        .filter { it.matricula == matricula && it.concepto == concept }
                         .forEach { c ->
-                            listConcept.add(c.concepto)
+                            listC.add(c)
                         }
-
-                    listC = listado
-                    updateList(listC, concept)
+                    conceptHistoryAdapter.updateList(listC)
+                    if (listC.isEmpty()) activity?.supportFragmentManager?.popBackStack()
                 }
             })
         }
-
     }
 
-    private fun updateList(list: List<Concepto>, con: String) {
-        //if (con.length > 0) {
-            var listF = list.sortedByDescending {
-                LocalDate.parse(
-                    it.fecha.toString(),
-                    DateTimeFormatter.ofPattern("d/M/y")
-                )
-            }
-                .filter {
-                    it.matricula == matricula && it.concepto == con
-                }
-            conceptHistoryAdapter.updateList(listF)
-        /*} else {
-            var listF = list.sortedByDescending {
-                LocalDate.parse(
-                    it.fecha.toString(),
-                    DateTimeFormatter.ofPattern("d/M/y")
-                )
-            }
-                .filter {
-                    it.matricula == matricula
-                }
-            conceptHistoryAdapter.updateList(listF)
-        }*/
-
-    }
-
-    override fun onConceptMenuIconClick(concepto: Concepto) {
+    override fun onConceptClick(concepto: Concepto) {
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.menu_alert)
         dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
-        //val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
+        var taller = concepto.taller
+        if (taller == "null" || taller?.length == 0) taller = "-"
+
+        var precio = concepto.precio.toString()
+        if (precio == "null" || precio?.length == 0) precio = "-" else precio += "€"
+
+        var detalles = concepto.detalles
+        if (detalles == "null" || detalles?.length == 0) detalles = "-"
+        val txtDetails = dialog.findViewById(R.id.txtDetails) as TextView
+        txtDetails.setText(
+            "${concepto.concepto}\n" +
+                    "${getString(R.string.date)}: ${concepto.fecha}\n" +
+                    "${getString(R.string.taller)}: $taller\n" +
+                    "${getString(R.string.price)}: $precio\n" +
+                    "${getString(R.string.details)}: $detalles"
+        )
+        val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
         val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
         val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
         /*btnHistory.setOnClickListener {
             newIntent(concepto, "h")
             dialog.dismiss()
         }*/
-        (dialog.findViewById(R.id.btn_history) as FloatingActionButton).visibility = View.GONE
-        (dialog.findViewById(R.id.txt_history) as TextView).visibility=View.GONE
+        btnHistory.visibility = View.GONE
+        (dialog.findViewById(R.id.txt_history) as TextView).visibility = View.GONE
         btnEdit.setOnClickListener {
             //newIntent(concepto, "e")
             dialog.dismiss()
@@ -173,9 +167,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                     viewModel.showPreviusConceptByUpdate(concepto)
                     (activity as MainActivity).toast("${concepto.concepto} ${getString(R.string.deleted)}")
                     dialog.dismiss()
-                    //Actualizacion del listado tras el borrado de un concepto
-                    listC = listC.filter { it.id_concept != concepto.id_concept }
-                    updateList(listC, concepto.concepto)
+                    updateList()
                     //----------------------------------------------------------------------
                 })
         dialogBuilder.setNegativeButton("${getString(R.string.cancel)}",
@@ -188,8 +180,8 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         alert.show()
     }
 
-    override fun onConceptClick(concepto: Concepto) {
-        val dialogBuilder = AlertDialog.Builder(requireContext())
+    override fun onConceptMenuIconClick(concepto: Concepto) {
+        /*val dialogBuilder = AlertDialog.Builder(requireContext())
         var taller = concepto.taller
         if (taller == "null" || taller?.length == 0) taller = "-"
 
@@ -207,7 +199,7 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         )
         val alert = dialogBuilder.create()
         alert.setTitle("${concepto.concepto}")
-        alert.show()
+        alert.show()*/
     }
 
     fun newIntent(concepto: Concepto, option: String) {
@@ -239,6 +231,6 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     }
 
     fun changeFragmentActionBar() {
-        (activity as MainActivity).changeActionBar("$marca $modelo", "Historial: $matricula")
+        (activity as MainActivity).changeActionBar("$concept", "Historial: $matricula")
     }
 }

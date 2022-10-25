@@ -6,58 +6,67 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/txtDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:background="@drawable/corner_radius"
+        android:padding="15dp"
+        android:textSize="10pt"
+        android:textStyle="bold" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/txtDetails"
         android:src="@drawable/ic_history"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
         app:tint="@color/white" />
 
     <TextView
         android:id="@+id/txt_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="60dp"
-        android:text="Historial"
+        android:layout_below="@+id/btn_history"
+        android:text="@string/txt_history"
         android:textColor="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/txtDetails"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/ic_edit"
-        app:tint="@color/white"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        app:tint="@color/white" />
 
     <TextView
         android:id="@+id/txt_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Editar"
-        android:textColor="@color/white"
-        android:layout_marginTop="60dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/btn_edit"
+        android:layout_centerHorizontal="true"
+        android:text="@string/txt_edit"
+        android:textColor="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/txtDetails"
+        android:layout_alignParentEnd="true"
         android:src="@drawable/ic_delete"
-        app:tint="@color/white"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"/>
+        app:tint="@color/white" />
 
     <TextView
         android:id="@+id/txt_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Eliminar"
-        android:textColor="@color/white"
-        android:layout_marginTop="60dp"
-        android:layout_alignParentEnd="true"/>
+        android:layout_below="@+id/btn_delete"
+        android:layout_alignParentEnd="true"
+        android:text="@string/txt_delete"
+        android:textColor="@color/white" />
 
 </RelativeLayout>
