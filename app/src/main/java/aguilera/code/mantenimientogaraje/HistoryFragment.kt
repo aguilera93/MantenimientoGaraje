@@ -132,9 +132,9 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
                     "${getString(R.string.price)}: $precio\n" +
                     "${getString(R.string.details)}: $detalles"
         )
-        val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
-        val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
-        val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
+        val btnHistory = dialog.findViewById<FloatingActionButton>(R.id.btn_history)
+        val btnEdit = dialog.findViewById<FloatingActionButton>(R.id.btn_edit)
+        val btnDelete = dialog.findViewById<FloatingActionButton>(R.id.btn_delete)
         /*btnHistory.setOnClickListener {
             newIntent(concepto, "h")
             dialog.dismiss()

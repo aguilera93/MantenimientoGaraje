@@ -152,10 +152,10 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.menu_alert)
         dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
-        val btnHistory = dialog.findViewById(R.id.btn_history) as FloatingActionButton
-        val btnEdit = dialog.findViewById(R.id.btn_edit) as FloatingActionButton
-        val btnDelete = dialog.findViewById(R.id.btn_delete) as FloatingActionButton
-        val txtDetails = dialog.findViewById(R.id.txtDetails) as TextView
+        val btnHistory = dialog.findViewById<FloatingActionButton>(R.id.btn_history)
+        val btnEdit = dialog.findViewById<FloatingActionButton>(R.id.btn_edit)
+        val btnDelete = dialog.findViewById<FloatingActionButton>(R.id.btn_delete)
+        val txtDetails = dialog.findViewById<TextView>(R.id.txtDetails)
         txtDetails.visibility = View.GONE
         dialog.findViewById<TextView>(R.id.txt_history).setText(R.string.concepts)
         btnHistory.setOnClickListener {
