@@ -64,6 +64,9 @@ class GarageViewModel(
     fun updateConcept(concepto: Concepto) =
         viewModelScope.launch(Dispatchers.IO) { repositoryC.updateConcept(concepto) }
 
+    fun updateFechConcept(id_concepto: Int, rFecha: String) =
+        viewModelScope.launch(Dispatchers.IO) { repositoryC.updateFechConcept(id_concepto, rFecha) }
+
     fun deleteConcept(concepto: Concepto) =
         viewModelScope.launch(Dispatchers.IO) { repositoryC.deleteConcept(concepto) }
 

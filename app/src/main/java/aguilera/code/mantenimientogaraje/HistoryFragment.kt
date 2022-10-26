@@ -141,10 +141,12 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         }*/
         btnHistory.visibility = View.GONE
         (dialog.findViewById(R.id.txt_history) as TextView).visibility = View.GONE
-        btnEdit.setOnClickListener {
-            //newIntent(concepto, "e")
+        /*btnEdit.setOnClickListener {
+            newIntent(concepto, "e")
             dialog.dismiss()
-        }
+        }*/
+        btnEdit.visibility = View.GONE
+        (dialog.findViewById(R.id.txt_edit) as TextView).visibility = View.GONE
         btnDelete.setOnClickListener {
             newIntent(concepto, "d")
             dialog.dismiss()

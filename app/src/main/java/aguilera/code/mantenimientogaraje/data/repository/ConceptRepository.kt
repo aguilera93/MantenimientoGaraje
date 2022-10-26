@@ -26,6 +26,10 @@ class ConceptRepository(private val conceptoDao: ConceptoDao) {
         conceptoDao.updateConcept(concepto)
     }
 
+    suspend fun updateFechConcept(id_concept: Int, rFech: String) {
+        conceptoDao.updateFechConcept(id_concept, rFech)
+    }
+
     //delete an event by id.
     suspend fun deleteConceptByMatricula(matricula: String) =
         conceptoDao.deleteConceptByMatricula(matricula)
@@ -39,6 +43,7 @@ class ConceptRepository(private val conceptoDao: ConceptoDao) {
     suspend fun showPreviusConceptByUpdate(concepto: Concepto) {
         conceptoDao.showPreviusConceptByUpdate(concepto.matricula, concepto.concepto)
     }
+
     suspend fun clearRememberConceptByUpdate(concepto: Concepto) {
         concepto.id_concept?.let { conceptoDao.clearRememberConceptByUpdate(it) }
     }

@@ -3,8 +3,8 @@ package aguilera.code.mantenimientogaraje
 import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentRememberBinding
+import android.app.DatePickerDialog
 import android.app.Dialog
-import android.content.ClipData.newIntent
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
@@ -12,8 +12,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.DatePicker
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -21,11 +23,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
+
+private lateinit var viewModel: GarageViewModel
 
 class RememberFragment : Fragment(), ConceptRememberClickInterface,
     ConceptRememberMenuIconClickInterface {
 
-    private lateinit var viewModel: GarageViewModel
     private lateinit var conceptRememberAdapter: ConceptRememberAdapter
 
     private var binding: FragmentRememberBinding? = null
@@ -33,7 +37,6 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
     var matricula = ""
     var marca = ""
     var modelo = ""
-    //lateinit var listC: List<Concepto>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -136,6 +139,8 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
         (dialog.findViewById(R.id.txt_history) as TextView).visibility = View.GONE
         btnEdit.setOnClickListener {
             //newIntent(concepto, "e")
+            val newFragment: DialogFragment = ChangeDateFragment(concepto)
+            fragmentManager?.let { it1 -> newFragment.show(it1, "DatePicker") }
             dialog.dismiss()
         }
         btnDelete.setOnClickListener {
@@ -225,4 +230,25 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
         (activity as MainActivity).changeActionBar("$marca $modelo", "Recordatorios: $matricula")
     }
 
+}
+
+class ChangeDateFragment(concepto: Concepto) : DialogFragment(),
+    DatePickerDialog.OnDateSetListener {
+    var c = concepto
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val calendar: Calendar = Calendar.getInstance()
+        val yy: Int = calendar.get(Calendar.YEAR)
+        val mm: Int = calendar.get(Calendar.MONTH)
+        val dd: Int = calendar.get(Calendar.DAY_OF_MONTH)
+        return DatePickerDialog(requireActivity(), this, yy, mm, dd)
+    }
+
+    override fun onDateSet(view: DatePicker, yy: Int, mm: Int, dd: Int) {
+        populateSetDate(yy, mm + 1, dd)
+    }
+
+    fun populateSetDate(year: Int, month: Int, day: Int) {
+        var fechConcept = "$day/$month/$year"
+        c.id_concept?.let { viewModel.updateFechConcept(it, fechConcept) }
+    }
 }
