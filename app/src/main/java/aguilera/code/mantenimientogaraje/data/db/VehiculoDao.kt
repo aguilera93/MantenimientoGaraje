@@ -20,6 +20,10 @@ interface VehiculoDao {
     @Update
     suspend fun updateVehicle(vehicle: Vehiculo)
 
+    //
+    @Query("UPDATE vehiculos SET kms=:kms WHERE matricula = :matricula")
+    suspend fun updateMaxKmsVehicle(matricula: String, kms: Int)
+
     // read all the events from eventTable
     // and arrange events in ascending order
     // of their ids

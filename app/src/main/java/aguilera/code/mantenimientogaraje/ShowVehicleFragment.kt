@@ -18,6 +18,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale.filter
@@ -32,6 +35,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
     var matricula = ""
     var marca = ""
     var modelo = ""
+    var maxKms = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,28 +65,6 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.show_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> {
-                // navigate to settings screen
-                true
-            }
-            R.id.action_clear -> {
-                // edit vehicle
-                true
-            }
-            R.id.action_info -> {
-                // show info screen
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     private fun initView() {
 
         matricula = arguments?.getString("matricula").toString()
@@ -94,6 +76,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
                 val fragment = NewConceptVehicleFragment()
                 fragment.arguments = Bundle().apply {
                     putString("matricula", matricula)
+                    putString("maxKms",maxKms)
                 }
                 it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                     .addToBackStack("NewConceptVehicleFragment").commit()
@@ -133,6 +116,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
             adapter = conceptAdapter
         }
 
+        getMaxKms()
     }
 
     private fun observeEvents() {
@@ -172,6 +156,9 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
         var taller = concepto.taller
         if (taller == "null" || taller?.length == 0) taller = "-"
 
+        var kms = concepto.kms.toString()
+        if (kms.toString() == "null" || kms?.toString()?.length == 0) kms = "-"
+
         var precio = concepto.precio.toString()
         if (precio == "null" || precio?.length == 0) precio = "-" else precio += "€"
 
@@ -181,6 +168,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
         txtDetails.setText(
             "${concepto.concepto}\n" +
                     "${getString(R.string.date)}: ${concepto.fecha}\n" +
+                    "${getString(R.string.kms)}: $kms\n" +
                     "${getString(R.string.taller)}: $taller\n" +
                     "${getString(R.string.price)}: $precio\n" +
                     "${getString(R.string.details)}: $detalles"
@@ -201,6 +189,12 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
             dialog.dismiss()
         }
         dialog.show()
+    }
+
+    fun getMaxKms() {
+        CoroutineScope(Dispatchers.IO).launch {
+            maxKms = viewModel.getMaxKmsVehicle(matricula).toString()
+        }
     }
 
     fun delete(concepto: Concepto) {
@@ -272,6 +266,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
                     putString("type", "Edit")
                     putString("matricula", matricula)
                     putSerializable("concept", concepto)
+                    putString("maxKms",maxKms)
                 }
                 it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                     .addToBackStack("NewConceptVehicleFragment").commit()
@@ -283,4 +278,27 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
     fun changeFragmentActionBar() {
         (activity as MainActivity).changeActionBar("$marca $modelo", "Conceptos: $matricula")
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.show_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                // navigate to settings screen
+                true
+            }
+            R.id.action_clear -> {
+                // edit vehicle
+                true
+            }
+            R.id.action_info -> {
+                // show info screen
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 }

@@ -8,10 +8,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import android.widget.DatePicker
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -49,8 +46,7 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //(activity as AppCompatActivity?)!!.supportActionBar!!.hide()
+        setHasOptionsMenu(true)
 
         viewModel = ViewModelProvider(
             this,
@@ -115,6 +111,9 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
         var taller = concepto.taller
         if (taller == "null" || taller?.length == 0) taller = "-"
 
+        var kms = concepto.kms.toString()
+        if (kms.toString() == "null" || kms?.toString()?.length == 0) kms = "-"
+
         var precio = concepto.precio.toString()
         if (precio == "null" || precio?.length == 0) precio = "-" else precio += "€"
 
@@ -124,6 +123,7 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
         txtDetails.setText(
             "${concepto.concepto}\n" +
                     "${getString(R.string.date)}: ${concepto.fecha}\n" +
+                    "${getString(R.string.kms)}: $kms\n" +
                     "${getString(R.string.taller)}: $taller\n" +
                     "${getString(R.string.price)}: $precio\n" +
                     "${getString(R.string.details)}: $detalles"
@@ -228,6 +228,28 @@ class RememberFragment : Fragment(), ConceptRememberClickInterface,
 
     fun changeFragmentActionBar() {
         (activity as MainActivity).changeActionBar("$marca $modelo", "Recordatorios: $matricula")
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                // navigate to settings screen
+                true
+            }
+            R.id.action_clear -> {
+                // delete all vehicles
+                true
+            }
+            R.id.action_info -> {
+                // show info screen
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
 }

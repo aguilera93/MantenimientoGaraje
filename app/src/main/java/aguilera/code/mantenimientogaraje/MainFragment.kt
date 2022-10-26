@@ -52,28 +52,6 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> {
-                // navigate to settings screen
-                true
-            }
-            R.id.action_clear -> {
-                // delete all vehicles
-                true
-            }
-            R.id.action_info -> {
-                // show info screen
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     private fun initView() {
         binding?.btnAdd?.setOnClickListener {
             activity?.let {
@@ -202,6 +180,28 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
 
     fun changeFragmentActionBar() {
         (activity as MainActivity).changeActionBar(getString(R.string.vehicle_list_title), "")
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                // navigate to settings screen
+                true
+            }
+            R.id.action_clear -> {
+                // delete all vehicles
+                true
+            }
+            R.id.action_info -> {
+                // show info screen
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
 }

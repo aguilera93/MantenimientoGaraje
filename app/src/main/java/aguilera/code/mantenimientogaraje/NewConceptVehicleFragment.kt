@@ -20,6 +20,8 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -34,6 +36,7 @@ class NewConceptVehicleFragment : Fragment() {
     var matricula: String = ""
     var edit: Boolean = false
     var validate: Boolean = false
+    var maxKms: String = ""
     lateinit var oldConcept: Concepto
 
     override fun onCreateView(
@@ -84,6 +87,7 @@ class NewConceptVehicleFragment : Fragment() {
     }
 
     fun getValues() {
+        maxKms = arguments?.getString("maxKms").toString()
         matricula = arguments?.getString("matricula").toString()
 
         if (arguments?.getString("type") == "Edit") {
@@ -91,15 +95,6 @@ class NewConceptVehicleFragment : Fragment() {
             oldConcept = arguments?.getSerializable("concept") as Concepto
             conceptId = oldConcept.id_concept
         }
-    }
-
-    fun rememberCheck(checked: Boolean?): Boolean {
-        if (checked == true) {
-            //return View.VISIBLE
-            return true
-        }
-        //return View.INVISIBLE
-        return false
     }
 
     fun setValues() {
@@ -120,6 +115,9 @@ class NewConceptVehicleFragment : Fragment() {
             binding?.cbRecordar?.setText("Recordar: ${oldConcept.rFecha}")
             binding?.btnSave?.setText(getString(R.string.btn_update))
         } else {
+            val sdf = SimpleDateFormat("dd/M/yyyy")
+            binding?.etFecha?.setText(sdf.format(Date()))
+            binding?.etKMSC?.setText(maxKms)
             binding?.btnSave?.setText(getString(R.string.btn_save))
         }
     }
@@ -176,6 +174,22 @@ class NewConceptVehicleFragment : Fragment() {
                 activity?.supportFragmentManager?.popBackStack()
             }
         }
+        //Actualizo los Kms del vehiculo segun los kms introducidos en el concepto
+        var maxKmsC = concept.kms?.toString()?.toInt()
+        if (!maxKmsC.toString().isNullOrBlank()) {
+            if (maxKms.toInt() < maxKmsC!!) {
+                viewModal.updateMaxKmsVehicle(matricula, maxKmsC)
+            }
+        }
+    }
+
+    fun rememberCheck(checked: Boolean?): Boolean {
+        if (checked == true) {
+            //return View.VISIBLE
+            return true
+        }
+        //return View.INVISIBLE
+        return false
     }
 
     fun validateFields() {

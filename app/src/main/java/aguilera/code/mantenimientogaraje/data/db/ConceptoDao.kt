@@ -47,6 +47,9 @@ interface ConceptoDao {
     @Query("Select * from conceptos order by matricula ASC")
     suspend fun getConcepts(): List<Concepto>
 
+    @Query("Select max(kms) from conceptos WHERE matricula = :matricula")
+    suspend fun getMaxKmsVehicle(matricula: String): Int
+
     // delete all events
     @Query("DELETE FROM conceptos")
     suspend fun clearConcepts()

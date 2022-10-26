@@ -23,8 +23,14 @@ class VehicleRepository(private val vehiculoDao: VehiculoDao) {
     suspend fun updateVehicle(vehiculo: Vehiculo) {
         vehiculoDao.updateVehicle(vehiculo)
     }
+
+    suspend fun updateMaxKmsVehicle(matricula: String, kms: Int) {
+        vehiculoDao.updateMaxKmsVehicle(matricula, kms)
+    }
+
     //delete an event by id.
-    suspend fun deleteVehicleByMatricula(matricula: String) = vehiculoDao.deleteVehicleByMatricula(matricula)
+    suspend fun deleteVehicleByMatricula(matricula: String) =
+        vehiculoDao.deleteVehicleByMatricula(matricula)
 
     // delete all events
     suspend fun clearVehicles() = vehiculoDao.clearVehicles()

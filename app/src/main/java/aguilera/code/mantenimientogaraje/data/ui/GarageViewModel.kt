@@ -41,11 +41,16 @@ class GarageViewModel(
     suspend fun getConcepts(): List<Concepto> =
         repositoryC.getConcepts()
 
+    suspend fun getMaxKmsVehicle(matricula: String): Int = repositoryC.getMaxKmsVehicle(matricula)
+
     fun insertVehicle(vehiculo: Vehiculo) =
         viewModelScope.launch(Dispatchers.IO) { repositoryV.insertVehicle(vehiculo) }
 
     fun updateVehicle(vehiculo: Vehiculo) =
         viewModelScope.launch(Dispatchers.IO) { repositoryV.updateVehicle(vehiculo) }
+
+    fun updateMaxKmsVehicle(matricula: String, kms: Int) =
+        viewModelScope.launch(Dispatchers.IO) { repositoryV.updateMaxKmsVehicle(matricula, kms) }
 
     fun deleteVehicle(vehiculo: Vehiculo) =
         viewModelScope.launch(Dispatchers.IO) { repositoryV.deleteVehicle(vehiculo) }
