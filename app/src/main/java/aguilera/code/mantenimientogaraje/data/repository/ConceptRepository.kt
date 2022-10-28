@@ -11,6 +11,8 @@ class ConceptRepository(private val conceptoDao: ConceptoDao) {
 
     suspend fun getConcepts(): List<Concepto> = conceptoDao.getConcepts()
 
+    suspend fun getRememberConcepts(): List<Concepto> = conceptoDao.getRememberConcepts()
+
     suspend fun getMaxKmsVehicle(matricula: String): Int = conceptoDao.getMaxKmsVehicle(matricula)
 
     // adds an event to our database.

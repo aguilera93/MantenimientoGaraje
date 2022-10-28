@@ -41,6 +41,9 @@ class GarageViewModel(
     suspend fun getConcepts(): List<Concepto> =
         repositoryC.getConcepts()
 
+    suspend fun getRememberConcepts(): List<Concepto> =
+        repositoryC.getRememberConcepts()
+
     suspend fun getMaxKmsVehicle(matricula: String): Int = repositoryC.getMaxKmsVehicle(matricula)
 
     fun insertVehicle(vehiculo: Vehiculo) =

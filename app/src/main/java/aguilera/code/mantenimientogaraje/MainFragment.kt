@@ -7,8 +7,10 @@ import aguilera.code.mantenimientogaraje.databinding.FragmentMainBinding
 import android.app.Dialog
 import android.content.ClipData.newIntent
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -18,6 +20,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInterface {
 
