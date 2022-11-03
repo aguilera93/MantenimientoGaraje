@@ -37,14 +37,10 @@ class GarageViewModel(
         allConcepts = repositoryC.getAllConcepts()
     }
 
-    @JvmName("getConcepts1")
-    suspend fun getConcepts(): List<Concepto> =
-        repositoryC.getConcepts()
+    suspend fun getVehicleByMatricula(matricula: String): Vehiculo =
+        repositoryV.getVehicleByMatricula(matricula)
 
-    suspend fun getRememberConcepts(): List<Concepto> =
-        repositoryC.getRememberConcepts()
-
-    suspend fun getMaxKmsVehicle(matricula: String): Int = repositoryC.getMaxKmsVehicle(matricula)
+    suspend fun checkVehiculo(matricula: String): Int = repositoryV.checkVehiculo(matricula)
 
     fun insertVehicle(vehiculo: Vehiculo) =
         viewModelScope.launch(Dispatchers.IO) { repositoryV.insertVehicle(vehiculo) }
@@ -65,6 +61,17 @@ class GarageViewModel(
         viewModelScope.launch(Dispatchers.IO) { repositoryV.clearVehicles() }
 
     //----------------------------------------------------------------------------------------------
+    @JvmName("getConcepts1")
+    suspend fun getConcepts(): List<Concepto> =
+        repositoryC.getConcepts()
+
+    suspend fun getRememberConcepts(): List<Concepto> =
+        repositoryC.getRememberConcepts()
+
+    suspend fun getMaxKmsVehicle(matricula: String): Int = repositoryC.getMaxKmsVehicle(matricula)
+
+    suspend fun checkConcept(concepto: String, matricula: String): Int =
+        repositoryC.checkConcept(concepto,matricula)
 
     fun insertConcept(concepto: Concepto) =
         viewModelScope.launch(Dispatchers.IO) { repositoryC.insertConcept(concepto) }
@@ -84,8 +91,8 @@ class GarageViewModel(
     fun clearRememberConceptByUpdate(concepto: Concepto) =
         viewModelScope.launch(Dispatchers.IO) { repositoryC.clearRememberConceptByUpdate(concepto) }
 
-    fun deleteConceptByMatricula(matricula: String) =
-        viewModelScope.launch(Dispatchers.IO) { repositoryC.deleteConceptByMatricula(matricula) }
+    fun deleteConceptsByMatricula(matricula: String) =
+        viewModelScope.launch(Dispatchers.IO) { repositoryC.deleteConceptsByMatricula(matricula) }
 
     fun clearConcepts() =
         viewModelScope.launch(Dispatchers.IO) { repositoryC.clearConcepts() }

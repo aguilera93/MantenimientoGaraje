@@ -14,14 +14,14 @@
         android:layout_margin="5dp"
         android:background="@drawable/corner_radius"
         android:padding="15dp"
-        android:textSize="10pt"
-        android:textStyle="bold" />
+        android:textSize="10pt" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtDetails"
+        android:layout_marginTop="50dp"
         android:src="@drawable/ic_history"
         app:tint="@color/white" />
 
@@ -39,6 +39,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtDetails"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+
         android:src="@drawable/ic_edit"
         app:tint="@color/white" />
 
@@ -57,6 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtDetails"
         android:layout_alignParentEnd="true"
+        android:layout_marginTop="50dp"
         android:src="@drawable/ic_delete"
         app:tint="@color/white" />
 

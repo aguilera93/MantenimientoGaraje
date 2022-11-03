@@ -26,7 +26,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
-    ConceptHistoryMenuIconClickInterface {
+    ConceptHistoryDeleteIconClickInterface {
 
     private lateinit var viewModel: GarageViewModel
     private lateinit var conceptHistoryAdapter: ConceptHistoryAdapter
@@ -61,11 +61,9 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         initView()
         observeEvents()
         changeFragmentActionBar()
-
     }
 
     private fun initView() {
-
         matricula = arguments?.getString("matricula").toString()
         marca = arguments?.getString("marca").toString()
         modelo = arguments?.getString("modelo").toString()
@@ -76,7 +74,6 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
             layoutManager = LinearLayoutManager(requireActivity())
             adapter = conceptHistoryAdapter
         }
-
     }
 
     private fun observeEvents() {
@@ -125,32 +122,25 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         if (detalles == "null" || detalles?.length == 0) detalles = "-"
         val txtDetails = dialog.findViewById(R.id.txtDetails) as TextView
         txtDetails.setText(
-            "${concepto.concepto}\n" +
-                    "${getString(R.string.date)}: ${concepto.fecha}\n" +
-                    "${getString(R.string.kms)}: $kms\n" +
-                    "${getString(R.string.taller)}: $taller\n" +
-                    "${getString(R.string.price)}: $precio\n" +
-                    "${getString(R.string.details)}: $detalles"
+            Html.fromHtml(
+                "<u><b>${concepto.concepto}</b></u><br />" +
+                        "<b>${getString(R.string.details)}:</b> $detalles<br />" +
+                        "<b>${getString(R.string.date)}:</b> ${concepto.fecha}<br />" +
+                        "<b>${getString(R.string.kms)}:</b> $kms<br />" +
+                        "<b>${getString(R.string.price)}:</b> $precio<br />" +
+                        "<b>${getString(R.string.taller)}:</b> $taller"
+
+            )
         )
         val btnHistory = dialog.findViewById<FloatingActionButton>(R.id.btn_history)
         val btnEdit = dialog.findViewById<FloatingActionButton>(R.id.btn_edit)
         val btnDelete = dialog.findViewById<FloatingActionButton>(R.id.btn_delete)
-        /*btnHistory.setOnClickListener {
-            newIntent(concepto, "h")
-            dialog.dismiss()
-        }*/
         btnHistory.visibility = View.GONE
         (dialog.findViewById(R.id.txt_history) as TextView).visibility = View.GONE
-        /*btnEdit.setOnClickListener {
-            newIntent(concepto, "e")
-            dialog.dismiss()
-        }*/
         btnEdit.visibility = View.GONE
         (dialog.findViewById(R.id.txt_edit) as TextView).visibility = View.GONE
-        btnDelete.setOnClickListener {
-            newIntent(concepto, "d")
-            dialog.dismiss()
-        }
+        btnDelete.visibility = View.GONE
+        (dialog.findViewById(R.id.txt_delete) as TextView).visibility = View.GONE
         dialog.show()
     }
 
@@ -182,54 +172,8 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
         alert.show()
     }
 
-    override fun onConceptMenuIconClick(concepto: Concepto) {
-        /*val dialogBuilder = AlertDialog.Builder(requireContext())
-        var taller = concepto.taller
-        if (taller == "null" || taller?.length == 0) taller = "-"
-
-        var precio = concepto.precio.toString()
-        if (precio == "null" || precio?.length == 0) precio = "-" else precio += "€"
-
-        var detalles = concepto.detalles
-        if (detalles == "null" || detalles?.length == 0) detalles = "-"
-
-        dialogBuilder.setMessage(
-            "${getString(R.string.date)}: ${concepto.fecha}\n" +
-                    "${getString(R.string.taller)}: $taller\n" +
-                    "${getString(R.string.price)}: $precio\n" +
-                    "${getString(R.string.details)}: $detalles"
-        )
-        val alert = dialogBuilder.create()
-        alert.setTitle("${concepto.concepto}")
-        alert.show()*/
-    }
-
-    fun newIntent(concepto: Concepto, option: String) {
-        // opening a new intent and passing a data to it.
-        when (option) {
-            "h" -> activity?.let {
-                val fragment = HistoryFragment()
-                fragment.arguments = Bundle().apply {
-                    putString("matricula", matricula)
-                    putString("marca", marca)
-                    putString("modelo", modelo)
-                    putString("concepto", concepto.concepto)
-                }
-                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
-                    .addToBackStack("HistoryFragment").commit()
-            }
-            "e" -> activity?.let {
-                val fragment = NewConceptVehicleFragment()
-                fragment.arguments = Bundle().apply {
-                    putString("type", "Edit")
-                    putString("matricula", matricula)
-                    putSerializable("concept", concepto)
-                }
-                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
-                    .addToBackStack("NewConceptVehicleFragment").commit()
-            }
-            "d" -> delete(concepto)
-        }
+    override fun onConceptDeleteIconClick(concepto: Concepto) {
+        delete(concepto)
     }
 
     fun changeFragmentActionBar() {
@@ -237,19 +181,11 @@ class HistoryFragment : Fragment(), ConceptHistoryClickInterface,
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.show_menu, menu)
+        inflater.inflate(R.menu.main_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_settings -> {
-                // navigate to settings screen
-                true
-            }
-            R.id.action_clear -> {
-                // edit vehicle
-                true
-            }
             R.id.action_info -> {
                 // show info screen
                 true

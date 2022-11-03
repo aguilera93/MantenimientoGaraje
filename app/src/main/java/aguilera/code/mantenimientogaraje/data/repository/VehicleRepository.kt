@@ -9,6 +9,10 @@ class VehicleRepository(private val vehiculoDao: VehiculoDao) {
     // get all the events
     fun getAllVehicles(): LiveData<List<Vehiculo>> = vehiculoDao.getAllVehicles()
 
+    suspend fun getVehicleByMatricula(matricula: String): Vehiculo= vehiculoDao.getVehicleByMatricula(matricula)
+
+    suspend fun checkVehiculo(matricula: String): Int= vehiculoDao.checkVehiculo(matricula)
+
     // adds an event to our database.
     suspend fun insertVehicle(vehiculo: Vehiculo) {
         vehiculoDao.insertVehicle(vehiculo)

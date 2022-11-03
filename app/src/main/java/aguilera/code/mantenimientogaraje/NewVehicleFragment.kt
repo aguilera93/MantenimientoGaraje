@@ -1,18 +1,20 @@
 package aguilera.code.mantenimientogaraje
 
-import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
 import aguilera.code.mantenimientogaraje.data.ui.GarageViewModel
 import aguilera.code.mantenimientogaraje.databinding.FragmentNewVehicleBinding
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class NewVehicleFragment : Fragment() {
 
@@ -90,35 +92,46 @@ class NewVehicleFragment : Fragment() {
         val matricula = binding?.etMatricula?.text.toString().uppercase()
         val marca = binding?.etMarca?.text.toString()
         val modelo = binding?.etModelo?.text.toString()
-        val kms = binding?.etKMSV?.text.toString().toIntOrNull()
+        var kms = binding?.etKMSV?.text.toString().toIntOrNull()
+        if (kms.toString() == "null") {
+            kms = 0
+        }
         val vin = binding?.etVIN?.text.toString()
         val detalles = binding?.etDetallesV?.text.toString()
 
         val vehiculo = Vehiculo(matricula, marca, modelo, kms, vin, detalles)
+
         // checking the type and then saving or updating the data.
         if (edit) {
             if (!matricula.isNullOrBlank()) {
-                binding?.etMatriculaLay?.error = null
                 viewModal.updateVehicle(vehiculo)
                 (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.update)}")
                 activity?.supportFragmentManager?.popBackStack()
             }
         } else {
-            if (!matricula.isNullOrBlank()) {
-                binding?.etMatriculaLay?.error = null
-                viewModal.insertVehicle(vehiculo)
-                (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.saved)}")
-                activity?.supportFragmentManager?.popBackStack()
-            } else {
-                binding?.etMatriculaLay?.error = getString(R.string.err_campo_obligatorio)
+            var n = 0
+            CoroutineScope(Dispatchers.IO).launch {
+                n = viewModal.checkVehiculo(matricula)
             }
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (matricula.isNullOrBlank()) {
+                    binding?.etMatriculaLay?.error = getString(R.string.err_campo_obligatorio)
+                } else if (n > 0) {
+                    binding?.etMatriculaLay?.error = getString(R.string.err_vehicle_duplicado)
+                } else {
+                    binding?.etMatriculaLay?.error = null
+                    viewModal.insertVehicle(vehiculo)
+                    (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.saved)}")
+                    activity?.supportFragmentManager?.popBackStack()
+                }
+            }, 10)
         }
     }
 
     fun changeFragmentActionBar() {
         if (edit) {
             (activity as MainActivity).changeActionBar(
-                getString(R.string.edit_vehicle),""
+                getString(R.string.edit_vehicle), ""
                 //"${binding?.etMatricula?.text.toString()}"
             )
         } else {

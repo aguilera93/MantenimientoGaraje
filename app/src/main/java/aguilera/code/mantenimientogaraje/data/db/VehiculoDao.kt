@@ -9,7 +9,7 @@ interface VehiculoDao {
 
     // adds a new entry to our database.
     // if some data is same/conflict, it'll be replace with new data
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertVehicle(vehicle: Vehiculo)
 
     // deletes an event
@@ -29,8 +29,12 @@ interface VehiculoDao {
     // of their ids
     @Query("Select * from vehiculos order by matricula ASC")
     fun getAllVehicles(): LiveData<List<Vehiculo>>
-    // why not use suspend ? because Room does not support LiveData with suspended functions.
-    // LiveData already works on a background thread and should be used directly without using coroutines
+
+    @Query("Select * from vehiculos WHERE matricula = :matricula")
+    suspend fun getVehicleByMatricula(matricula: String): Vehiculo
+
+    @Query("Select count(*) from vehiculos WHERE UPPER(matricula) = UPPER(:matricula)")
+    suspend fun checkVehiculo(matricula: String): Int
 
     // delete all events
     @Query("DELETE FROM vehiculos")

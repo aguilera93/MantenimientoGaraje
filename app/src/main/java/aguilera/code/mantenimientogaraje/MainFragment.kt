@@ -23,7 +23,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInterface {
+class MainFragment : Fragment(), VehicleClickInterface, VehicleDeleteIconClickInterface {
 
     private lateinit var viewModel: GarageViewModel
     private lateinit var vehicleAdapter: VehicleAdapter
@@ -85,7 +85,7 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
         }
     }
 
-    fun delete(vehiculo: Vehiculo) {
+    override fun onVehicleDeleteIconClick(vehiculo: Vehiculo) {
         val dialogBuilder = AlertDialog.Builder(requireContext())
         @Suppress("DEPRECATION")
         dialogBuilder.setMessage(
@@ -100,8 +100,10 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
                 "${getString(R.string.accept)}",
                 DialogInterface.OnClickListener { dialog, id ->
                     viewModel.deleteVehicle(vehiculo)
+                    viewModel.deleteConceptsByMatricula(vehiculo.matricula)
                     (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.deleted)}")
                     dialog.dismiss()
+                    fragmentManager?.popBackStack()
                 })
         dialogBuilder.setNegativeButton("${getString(R.string.cancel)}",
             DialogInterface.OnClickListener { dialog, id ->
@@ -111,11 +113,9 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
         val alert = dialogBuilder.create()
         alert.setTitle("${getString(R.string.delete)}:")
         alert.show()
-
     }
 
-    override fun onVehicleMenuIconClick(vehiculo: Vehiculo) {
-        /*// opening a new intent and passing a data to it.
+    override fun onVehicleClick(vehiculo: Vehiculo) {
         activity?.let {
             val fragment = ShowVehicleFragment()
             fragment.arguments = Bundle().apply {
@@ -125,60 +125,6 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
             }
             it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                 .addToBackStack("ShowVehicleFragment").commit()
-        }*/
-    }
-
-    override fun onVehicleClick(vehiculo: Vehiculo) {
-        val dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.menu_alert)
-        dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
-        val btnHistory = dialog.findViewById<FloatingActionButton>(R.id.btn_history)
-        val btnEdit = dialog.findViewById<FloatingActionButton>(R.id.btn_edit)
-        val btnDelete = dialog.findViewById<FloatingActionButton>(R.id.btn_delete)
-        val txtDetails = dialog.findViewById<TextView>(R.id.txtDetails)
-        txtDetails.visibility = View.GONE
-        dialog.findViewById<TextView>(R.id.txt_history).setText(R.string.concepts)
-        btnHistory.setOnClickListener {
-            newIntent(vehiculo, "h")
-            dialog.dismiss()
-        }
-        btnEdit.setOnClickListener {
-            newIntent(vehiculo, "e")
-            dialog.dismiss()
-        }
-        btnDelete.setOnClickListener {
-            newIntent(vehiculo, "d")
-            dialog.dismiss()
-        }
-        dialog.show()
-    }
-
-    fun newIntent(vehiculo: Vehiculo, option: String) {
-        // opening a new intent and passing a data to it.
-        when (option) {
-            "h" -> activity?.let {
-                val fragment = ShowVehicleFragment()
-                fragment.arguments = Bundle().apply {
-                    putString("matricula", vehiculo.matricula)
-                    putString("marca", vehiculo.marca)
-                    putString("modelo", vehiculo.modelo)
-                }
-                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
-                    .addToBackStack("ShowVehicleFragment").commit()
-            }
-            "e" -> activity?.let {
-                val fragment = NewVehicleFragment()
-                fragment.arguments = Bundle().apply {
-                    putString("type", "Edit")
-                    putString("matricula", vehiculo.matricula)
-                    putSerializable("vehiculo", vehiculo)
-                }
-                it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
-                    .addToBackStack("NewVehicleFragment").commit()
-            }
-            "d" -> delete(vehiculo)
         }
     }
 
@@ -192,14 +138,6 @@ class MainFragment : Fragment(), VehicleClickInterface, VehicleMenuIconClickInte
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_settings -> {
-                // navigate to settings screen
-                true
-            }
-            R.id.action_clear -> {
-                // delete all vehicles
-                true
-            }
             R.id.action_info -> {
                 // show info screen
                 true

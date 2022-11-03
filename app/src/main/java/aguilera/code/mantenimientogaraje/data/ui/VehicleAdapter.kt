@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class VehicleAdapter(
-    val vehicleMenuIconClickInterface: VehicleMenuIconClickInterface,
+    val vehicleDeleteIconClickInterface: VehicleDeleteIconClickInterface,
     val vehicleClickInterface: VehicleClickInterface
 ) : RecyclerView.Adapter<VehicleViewHolder>() {
 
@@ -30,7 +30,7 @@ class VehicleAdapter(
         // adding click listener to our delete image view icon.
         holder.binding.imgMenu.setOnClickListener {
             // call eventDeleteIconClickInterface.onEventDeleteIconClick() and pass position to it.
-            vehicleMenuIconClickInterface.onVehicleMenuIconClick(allVehicles.get(position))
+            vehicleDeleteIconClickInterface.onVehicleDeleteIconClick(allVehicles.get(position))
         }
 
         // adding click listener to our recycler view item.
@@ -60,10 +60,10 @@ class VehicleAdapter(
     }
 }
 
-interface VehicleMenuIconClickInterface {
+interface VehicleDeleteIconClickInterface {
     // creating a method for click
     // action on delete image view.
-    fun onVehicleMenuIconClick(vehiculo: Vehiculo)
+    fun onVehicleDeleteIconClick(vehiculo: Vehiculo)
 }
 
 interface VehicleClickInterface {

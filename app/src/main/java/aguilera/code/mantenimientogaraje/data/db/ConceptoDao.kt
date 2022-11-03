@@ -9,7 +9,7 @@ interface ConceptoDao {
 
     // adds a new entry to our database.
     // if some data is same/conflict, it'll be replace with new data
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertConcept(concept: Concepto)
 
     // deletes an event
@@ -53,13 +53,16 @@ interface ConceptoDao {
     @Query("Select max(kms) from conceptos WHERE matricula = :matricula")
     suspend fun getMaxKmsVehicle(matricula: String): Int
 
+    @Query("Select count(concepto) from conceptos WHERE UPPER(concepto) = UPPER(:concepto) AND UPPER(matricula) = UPPER(:matricula)")
+    suspend fun checkConcept(concepto: String, matricula: String): Int
+
     // delete all events
     @Query("DELETE FROM conceptos")
     suspend fun clearConcepts()
 
     //you can use this too, to delete an event by id.
     @Query("DELETE FROM conceptos WHERE matricula = :matricula")
-    suspend fun deleteConceptByMatricula(matricula: String)
+    suspend fun deleteConceptsByMatricula(matricula: String)
 
     @Query("Select * from conceptos WHERE matricula = :matricula")
     fun getConceptByMatricula(matricula: String): LiveData<List<Concepto>>

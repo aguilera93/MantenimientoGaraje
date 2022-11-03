@@ -1,6 +1,7 @@
 package aguilera.code.mantenimientogaraje
 
 import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
+import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
 import aguilera.code.mantenimientogaraje.data.ui.*
 import aguilera.code.mantenimientogaraje.databinding.FragmentShowVehicleBinding
 import android.app.Dialog
@@ -25,17 +26,17 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale.filter
 
-class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconClickInterface {
+class ShowVehicleFragment : Fragment(), ConceptClickInterface {
 
     private lateinit var viewModel: GarageViewModel
     private lateinit var conceptAdapter: ConceptAdapter
 
     private var binding: FragmentShowVehicleBinding? = null
 
+    lateinit var vehiculo: Vehiculo
     var matricula = ""
     var marca = ""
     var modelo = ""
-    var maxKms = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,14 +51,12 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
 
-        //(activity as AppCompatActivity?)!!.supportActionBar!!.show()
-
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication())
         ).get(GarageViewModel::class.java)
 
-        conceptAdapter = ConceptAdapter(this, this)
+        conceptAdapter = ConceptAdapter(this)
 
         initView()
         observeEvents()
@@ -70,13 +69,13 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
         matricula = arguments?.getString("matricula").toString()
         marca = arguments?.getString("marca").toString()
         modelo = arguments?.getString("modelo").toString()
+        getVehiculo()
 
         binding?.btnAdd?.setOnClickListener {
             activity?.let {
                 val fragment = NewConceptVehicleFragment()
                 fragment.arguments = Bundle().apply {
                     putString("matricula", matricula)
-                    putString("maxKms",maxKms)
                 }
                 it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                     .addToBackStack("NewConceptVehicleFragment").commit()
@@ -115,8 +114,6 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
             layoutManager = LinearLayoutManager(requireActivity())
             adapter = conceptAdapter
         }
-
-        getMaxKms()
     }
 
     private fun observeEvents() {
@@ -166,12 +163,15 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
         if (detalles == "null" || detalles?.length == 0) detalles = "-"
         val txtDetails = dialog.findViewById(R.id.txtDetails) as TextView
         txtDetails.setText(
-            "${concepto.concepto}\n" +
-                    "${getString(R.string.date)}: ${concepto.fecha}\n" +
-                    "${getString(R.string.kms)}: $kms\n" +
-                    "${getString(R.string.taller)}: $taller\n" +
-                    "${getString(R.string.price)}: $precio\n" +
-                    "${getString(R.string.details)}: $detalles"
+            Html.fromHtml(
+                "<u><b>${concepto.concepto}</b></u><br />" +
+                        "<b>${getString(R.string.details)}:</b> $detalles<br />" +
+                        "<b>${getString(R.string.date)}:</b> ${concepto.fecha}<br />" +
+                        "<b>${getString(R.string.kms)}:</b> $kms<br />" +
+                        "<b>${getString(R.string.price)}:</b> $precio<br />" +
+                        "<b>${getString(R.string.taller)}:</b> $taller"
+
+            )
         )
         val btnHistory = dialog.findViewById<FloatingActionButton>(R.id.btn_history)
         val btnEdit = dialog.findViewById<FloatingActionButton>(R.id.btn_edit)
@@ -191,9 +191,12 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
         dialog.show()
     }
 
-    fun getMaxKms() {
+    fun getVehiculo() {
         CoroutineScope(Dispatchers.IO).launch {
-            maxKms = viewModel.getMaxKmsVehicle(matricula).toString()
+            vehiculo = viewModel.getVehicleByMatricula(matricula)
+
+            marca = vehiculo.marca.toString()
+            modelo = vehiculo.modelo.toString()
         }
     }
 
@@ -224,26 +227,35 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
 
     }
 
-    override fun onConceptMenuIconClick(concepto: Concepto) {
-        /*val dialogBuilder = AlertDialog.Builder(requireContext())
-        var taller = concepto.taller
-        if (taller == "null" || taller?.length == 0) taller = "-"
-
-        var precio = concepto.precio.toString()
-        if (precio == "null" || precio?.length == 0) precio = "-" else precio += "€"
-
-        var detalles = concepto.detalles
-        if (detalles == "null" || detalles?.length == 0) detalles = "-"
-
+    fun delete(vehiculo: Vehiculo) {
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        @Suppress("DEPRECATION")
         dialogBuilder.setMessage(
-            "${getString(R.string.date)}: ${concepto.fecha}\n" +
-                    "${getString(R.string.taller)}: $taller\n" +
-                    "${getString(R.string.price)}: $precio\n" +
-                    "${getString(R.string.details)}: $detalles"
+            Html.fromHtml(
+                "${getString(R.string.que_delete)} " +
+                        "''<b>${vehiculo.marca} ${vehiculo.modelo} - ${vehiculo.matricula}</b>''?"
+            )
         )
+            // if the dialog is cancelable
+            .setCancelable(true)
+            .setPositiveButton(
+                "${getString(R.string.accept)}",
+                DialogInterface.OnClickListener { dialog, id ->
+                    viewModel.deleteVehicle(vehiculo)
+                    viewModel.deleteConceptsByMatricula(vehiculo.matricula)
+                    (activity as MainActivity).toast("${vehiculo.matricula} ${getString(R.string.deleted)}")
+                    dialog.dismiss()
+                    fragmentManager?.popBackStack()
+                })
+        dialogBuilder.setNegativeButton("${getString(R.string.cancel)}",
+            DialogInterface.OnClickListener { dialog, id ->
+                dialog.cancel()
+            })
+
         val alert = dialogBuilder.create()
-        alert.setTitle("${concepto.concepto}")
-        alert.show()*/
+        alert.setTitle("${getString(R.string.delete)}:")
+        alert.show()
+
     }
 
     fun newIntent(concepto: Concepto, option: String) {
@@ -266,7 +278,6 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
                     putString("type", "Edit")
                     putString("matricula", matricula)
                     putSerializable("concept", concepto)
-                    putString("maxKms",maxKms)
                 }
                 it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
                     .addToBackStack("NewConceptVehicleFragment").commit()
@@ -285,12 +296,25 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface, ConceptMenuIconCl
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_settings -> {
-                // navigate to settings screen
+            R.id.action_edit -> {
+                activity?.let {
+                    val fragment = NewVehicleFragment()
+                    fragment.arguments = Bundle().apply {
+                        putString("type", "Edit")
+                        putString("matricula", vehiculo.matricula)
+                        putSerializable("vehiculo", vehiculo)
+                    }
+                    it.supportFragmentManager.beginTransaction()
+                        .replace(R.id.mainContainer, fragment)
+                        .addToBackStack("NewVehicleFragment").commit()
+
+                    getVehiculo()
+                    changeFragmentActionBar()
+                }
                 true
             }
-            R.id.action_clear -> {
-                // edit vehicle
+            R.id.action_delete -> {
+                delete(vehiculo)
                 true
             }
             R.id.action_info -> {

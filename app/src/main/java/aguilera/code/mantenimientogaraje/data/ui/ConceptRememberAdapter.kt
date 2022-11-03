@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class ConceptRememberAdapter(
-    val conceptRememberMenuIconClickInterface: ConceptRememberMenuIconClickInterface,
+    val conceptRememberDeleteIconClickInterface: ConceptRememberDeleteIconClickInterface,
     val conceptRememberClickInterface: ConceptRememberClickInterface
 ) : RecyclerView.Adapter<ConceptRememberViewHolder>() {
 
@@ -29,7 +29,7 @@ class ConceptRememberAdapter(
         // adding click listener to our delete image view icon.
         holder.binding.imgMenu.setOnClickListener {
             // call eventDeleteIconClickInterface.onEventDeleteIconClick() and pass position to it.
-            conceptRememberMenuIconClickInterface.onConceptMenuIconClick(allConcepts.get(position))
+            conceptRememberDeleteIconClickInterface.onConceptDeleteIconClick(allConcepts.get(position))
         }
 
         // adding click listener to our recycler view item.
@@ -58,10 +58,10 @@ class ConceptRememberAdapter(
     }
 }
 
-interface ConceptRememberMenuIconClickInterface {
+interface ConceptRememberDeleteIconClickInterface {
     // creating a method for click
     // action on delete image view.
-    fun onConceptMenuIconClick(concepto: Concepto)
+    fun onConceptDeleteIconClick(concepto: Concepto)
 }
 
 interface ConceptRememberClickInterface {

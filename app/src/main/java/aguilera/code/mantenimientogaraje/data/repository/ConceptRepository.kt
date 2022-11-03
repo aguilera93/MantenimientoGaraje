@@ -15,6 +15,8 @@ class ConceptRepository(private val conceptoDao: ConceptoDao) {
 
     suspend fun getMaxKmsVehicle(matricula: String): Int = conceptoDao.getMaxKmsVehicle(matricula)
 
+    suspend fun checkConcept(concepto: String, matricula: String): Int = conceptoDao.checkConcept(concepto,matricula)
+
     // adds an event to our database.
     suspend fun insertConcept(concepto: Concepto) {
         conceptoDao.insertConcept(concepto)
@@ -35,8 +37,8 @@ class ConceptRepository(private val conceptoDao: ConceptoDao) {
     }
 
     //delete an event by id.
-    suspend fun deleteConceptByMatricula(matricula: String) =
-        conceptoDao.deleteConceptByMatricula(matricula)
+    suspend fun deleteConceptsByMatricula(matricula: String) =
+        conceptoDao.deleteConceptsByMatricula(matricula)
 
     // delete all events
     suspend fun clearConcepts() = conceptoDao.clearConcepts()

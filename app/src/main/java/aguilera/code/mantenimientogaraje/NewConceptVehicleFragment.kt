@@ -6,25 +6,25 @@ import aguilera.code.mantenimientogaraje.databinding.FragmentNewConceptVehicleBi
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.Dialog
-import android.content.ContentValues
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.CalendarContract.Events
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
+
 
 private var rFechCheck = ""
 private var binding: FragmentNewConceptVehicleBinding? = null
@@ -36,7 +36,8 @@ class NewConceptVehicleFragment : Fragment() {
     var matricula: String = ""
     var edit: Boolean = false
     var validate: Boolean = false
-    var maxKms: String = ""
+
+    var maxKms: Int? = null
     lateinit var oldConcept: Concepto
 
     override fun onCreateView(
@@ -87,7 +88,7 @@ class NewConceptVehicleFragment : Fragment() {
     }
 
     fun getValues() {
-        maxKms = arguments?.getString("maxKms").toString()
+        //maxKms = arguments?.getString("maxKms").toString()
         matricula = arguments?.getString("matricula").toString()
 
         if (arguments?.getString("type") == "Edit") {
@@ -115,9 +116,20 @@ class NewConceptVehicleFragment : Fragment() {
             binding?.cbRecordar?.setText("Recordar: ${oldConcept.rFecha}")
             binding?.btnSave?.setText(getString(R.string.btn_update))
         } else {
+            //Anota la fecha de hoy como valor por defecto
             val sdf = SimpleDateFormat("dd/M/yyyy")
             binding?.etFecha?.setText(sdf.format(Date()))
-            binding?.etKMSC?.setText(maxKms)
+            //--------------------------------------------
+            //Obtiene y anota los km max del vehiculo como valor por defecto
+            CoroutineScope(Dispatchers.IO).launch {
+                maxKms = viewModal.getMaxKmsVehicle(matricula)
+            }
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (maxKms.toString() != "null") {
+                    binding?.etKMSC?.setText(maxKms.toString())
+                }
+            }, 10)
+            //--------------------------------------------------------------
             binding?.btnSave?.setText(getString(R.string.btn_save))
         }
     }
@@ -168,16 +180,27 @@ class NewConceptVehicleFragment : Fragment() {
                 activity?.supportFragmentManager?.popBackStack()
             }
         } else {
-            if (!concepto.isNullOrBlank() && validate) {
-                viewModal.insertConcept(concept)
-                (activity as MainActivity).toast("${concept?.concepto} ${getString(R.string.saved)}")
-                activity?.supportFragmentManager?.popBackStack()
+            var n = 0
+            CoroutineScope(Dispatchers.IO).launch {
+                n = viewModal.checkConcept(concepto, matricula)
             }
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (binding?.etConcepto?.text.isNullOrBlank()) {
+                    binding?.etConceptoLay?.error = getString(R.string.err_campo_obligatorio)
+                } else if (n > 0) {
+                    binding?.etConceptoLay?.error = getString(R.string.err_concept_duplicado)
+                } else if (validate) {
+                    binding?.etConceptoLay?.error = null
+                    viewModal.insertConcept(concept)
+                    (activity as MainActivity).toast("${concept?.concepto} ${getString(R.string.saved)}")
+                    activity?.supportFragmentManager?.popBackStack()
+                }
+            }, 10)
         }
         //Actualizo los Kms del vehiculo segun los kms introducidos en el concepto
         var maxKmsC = concept.kms?.toString()?.toInt()
-        if (!maxKmsC.toString().isNullOrBlank()) {
-            if (maxKms.toInt() < maxKmsC!!) {
+        if (!maxKmsC.toString().isNullOrBlank() && maxKms.toString() != "null") {
+            if (maxKms!! < maxKmsC!!) {
                 viewModal.updateMaxKmsVehicle(matricula, maxKmsC)
             }
         }
@@ -198,16 +221,6 @@ class NewConceptVehicleFragment : Fragment() {
             validate = true
         } else {
             binding?.etFechaLay?.error = getString(R.string.err_campo_obligatorio)
-            validate = false
-        }
-
-        if (!binding?.etConcepto?.text.isNullOrBlank()) {
-            binding?.etConceptoLay?.error = null
-            if (validate) {
-                validate = true
-            }
-        } else {
-            binding?.etConceptoLay?.error = getString(R.string.err_campo_obligatorio)
             validate = false
         }
 

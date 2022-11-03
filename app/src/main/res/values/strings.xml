@@ -5,6 +5,8 @@
     <string name="btn_update">Actualizar</string>
     <string name="btn_save">Guardar</string>
     <string name="err_campo_obligatorio">Campo obligatorio - Debe introducir un valor</string>
+    <string name="err_concept_duplicado">El Concepto introducido ya existe, por favor introduzca otro valor</string>
+    <string name="err_vehicle_duplicado">La Matricula introducida ya existe, por favor introduzca otro valor</string>
     <string name="que_delete">¿Esta segur@ de que quiere eliminar</string>
     <string name="que_remember">¿Esta segur@ de que quiere quitar el recordatorio para el dia </string>
     <string name="edit_vehicle">Modificar Vehiculo</string>

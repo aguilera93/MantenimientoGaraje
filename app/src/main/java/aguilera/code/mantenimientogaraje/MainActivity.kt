@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
             ViewModelProvider.AndroidViewModelFactory.getInstance(this.application)
         ).get(GarageViewModel::class.java)
 
+        //Notificaciones de recordatorios
         checkRememberConcepts()
 
         supportFragmentManager.beginTransaction().replace(R.id.mainContainer, MainFragment())
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val listRemember = viewModel.getRememberConcepts()
             val sdf = SimpleDateFormat("dd/M/yyyy")
-            val f: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/M/yyyy")
+            val f: DateTimeFormatter = DateTimeFormatter.ofPattern("d/M/yyyy")
             val today = sdf.format(Date())
             var notificationId = 0
 
