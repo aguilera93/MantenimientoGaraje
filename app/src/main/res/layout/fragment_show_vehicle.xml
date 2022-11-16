@@ -26,7 +26,7 @@
         app:tint="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_history"
+        android:id="@+id/btn_money"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -35,7 +35,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_history"
+        android:src="@drawable/ic_money"
         android:visibility="invisible"
         app:tint="@color/white" />
 

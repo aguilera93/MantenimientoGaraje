@@ -50,6 +50,9 @@ interface ConceptoDao {
     @Query("Select * from conceptos where recordar=1 order by matricula ASC")
     suspend fun getRememberConcepts(): List<Concepto>
 
+    @Query("Select * from conceptos where matricula = :matricula")
+    suspend fun getConceptsByMatricula(matricula: String): List<Concepto>
+
     @Query("Select max(kms) from conceptos WHERE matricula = :matricula")
     suspend fun getMaxKmsVehicle(matricula: String): Int
 

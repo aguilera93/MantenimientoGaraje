@@ -8,6 +8,7 @@
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_add.xml" value="0.1575" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_edit.xml" value="0.1575" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_key.xml" value="0.1575" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_money.xml" value="0.1575" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_remember.xml" value="0.1575" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/drawable/ic_settings.xml" value="0.1575" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/activity_add_event.xml" value="0.17119565217391305" />
@@ -17,8 +18,10 @@
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/activity_nuevo_vehiculo.xml" value="0.17119565217391305" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/concept_rv_item.xml" value="0.19655797101449277" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/event_rv_item.xml" value="0.17119565217391305" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/fragment_graphics.xml" value="0.19655797101449277" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/fragment_history.xml" value="0.19655797101449277" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/fragment_main.xml" value="0.17119565217391305" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/fragment_money.xml" value="0.19655797101449277" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/fragment_new_concept_vehicle.xml" value="0.17119565217391305" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/fragment_new_vehicle.xml" value="0.17119565217391305" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/fragment_options.xml" value="0.2727272668160684" />
@@ -27,11 +30,15 @@
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/history_rv_item.xml" value="0.19655797101449277" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/list_item.xml" value="0.19655797101449277" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/menu_alert.xml" value="0.21818181345285476" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/money_rv_item.xml" value="0.19655797101449277" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/remember_rv_item.xml" value="0.19655797101449277" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/layout/vehicle_rv_item.xml" value="0.17119565217391305" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/menu/main_menu.xml" value="0.19895833333333332" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/menu/main_menu_toolbar.xml" value="0.19895833333333332" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGaraje/app/src/main/res/menu/show_menu.xml" value="0.19895833333333332" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGarajePruebas/app/src/main/res/layout/fragment_money.xml" value="0.19655797101449277" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGarajePruebas/app/src/main/res/layout/fragment_money_viewpager.xml" value="0.19655797101449277" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/MantenimientoGarajePruebas/app/src/main/res/layout/money_rv_item.xml" value="0.19655797101449277" />
       </map>
     </option>
   </component>

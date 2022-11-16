@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         ).get(GarageViewModel::class.java)
 
         //Notificaciones de recordatorios
-        checkRememberConcepts()
+        //checkRememberConcepts()
 
         supportFragmentManager.beginTransaction().replace(R.id.mainContainer, MainFragment())
             .commit()

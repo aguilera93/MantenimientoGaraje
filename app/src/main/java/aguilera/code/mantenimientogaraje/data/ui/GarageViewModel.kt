@@ -65,6 +65,9 @@ class GarageViewModel(
     suspend fun getConcepts(): List<Concepto> =
         repositoryC.getConcepts()
 
+    suspend fun getConceptsByMatricula(matricula: String): List<Concepto> =
+        repositoryC.getConceptsByMatricula(matricula)
+
     suspend fun getRememberConcepts(): List<Concepto> =
         repositoryC.getRememberConcepts()
 

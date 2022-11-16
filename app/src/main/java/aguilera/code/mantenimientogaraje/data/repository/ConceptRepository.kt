@@ -13,6 +13,8 @@ class ConceptRepository(private val conceptoDao: ConceptoDao) {
 
     suspend fun getRememberConcepts(): List<Concepto> = conceptoDao.getRememberConcepts()
 
+    suspend fun getConceptsByMatricula(matricula: String): List<Concepto> = conceptoDao.getConceptsByMatricula(matricula)
+
     suspend fun getMaxKmsVehicle(matricula: String): Int = conceptoDao.getMaxKmsVehicle(matricula)
 
     suspend fun checkConcept(concepto: String, matricula: String): Int = conceptoDao.checkConcept(concepto,matricula)

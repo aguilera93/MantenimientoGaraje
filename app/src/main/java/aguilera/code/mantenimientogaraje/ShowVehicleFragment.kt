@@ -21,9 +21,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAccessor
 import java.util.Locale.filter
 
 class ShowVehicleFragment : Fragment(), ConceptClickInterface {
@@ -37,6 +39,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface {
     var matricula = ""
     var marca = ""
     var modelo = ""
+    var listN = arrayListOf<Int>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,6 +73,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface {
         marca = arguments?.getString("marca").toString()
         modelo = arguments?.getString("modelo").toString()
         getVehiculo()
+        getConceptsMoney()
 
         binding?.btnAdd?.setOnClickListener {
             activity?.let {
@@ -82,17 +86,17 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface {
             }
         }
 
-        binding?.btnHistory?.setOnClickListener {
+        binding?.btnMoney?.setOnClickListener {
             activity?.let {
-                val fragment = HistoryFragment()
+                val fragment = MoneyViewpagerFragment()
                 fragment.arguments = Bundle().apply {
                     putString("matricula", matricula)
                     putString("marca", marca)
                     putString("modelo", modelo)
-                    putString("concepto", "")
+                    putSerializable("listN", listN)
                 }
                 it.supportFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment)
-                    .addToBackStack("HistoryFragment").commit()
+                    .addToBackStack("MoneyViewpagerFragment").commit()
             }
         }
 
@@ -129,6 +133,15 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface {
                     }
                         .filter { it.matricula == matricula && it.visible }
                     conceptAdapter.updateList(listF)
+
+                    //Muestra el boton money si existe algun registro ------
+                    var p = 0
+                    listF.forEach { concepto ->
+                        if (concepto.precio?.toString() != "null") p++
+                    }
+                    if (p > 0) binding?.btnMoney?.visibility =
+                        View.VISIBLE else binding?.btnMoney?.visibility = View.INVISIBLE
+                    //---------------------------------------------------------------------
 
                     //Muestra el boton remember si existe algun registro que recordar------
                     var n = 0
@@ -194,9 +207,25 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface {
     fun getVehiculo() {
         CoroutineScope(Dispatchers.IO).launch {
             vehiculo = viewModel.getVehicleByMatricula(matricula)
-
             marca = vehiculo.marca.toString()
             modelo = vehiculo.modelo.toString()
+        }
+    }
+
+    fun getConceptsMoney() {
+        CoroutineScope(Dispatchers.IO).launch {
+
+            val formatter = DateTimeFormatter.ofPattern("d/M/y")
+            lateinit var date: TemporalAccessor
+            var nMonth = 0
+
+            var conceptos = viewModel.getConceptsByMatricula(matricula)
+
+            conceptos.forEach {
+                date = formatter.parse(it.fecha)
+                nMonth = DateTimeFormatter.ofPattern("M").format(date).toString().toInt()
+                listN.add(nMonth)
+            }
         }
     }
 
