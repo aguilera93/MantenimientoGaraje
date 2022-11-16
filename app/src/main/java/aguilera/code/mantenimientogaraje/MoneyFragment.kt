@@ -162,7 +162,7 @@ class MoneyFragment : Fragment(), MoneyClickInterface {
         val formatter = DateTimeFormatter.ofPattern("d/M/y")
         val date = formatter.parse(fecha)
         val nMonth = DateTimeFormatter.ofPattern("M").format(date).toString().toInt()
-        val nYear = DateTimeFormatter.ofPattern("YYYY").format(date).toString().toInt()
+        val nYear = DateTimeFormatter.ofPattern("yyyy").format(date).toString().toInt()
         val year = Calendar.getInstance().get(Calendar.YEAR)
         if (monthN?.toInt() == 0 && year == nYear) {
             binding?.mes?.text =

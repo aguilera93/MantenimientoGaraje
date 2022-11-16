@@ -2,16 +2,16 @@ package aguilera.code.mantenimientogaraje
 
 import aguilera.code.mantenimientogaraje.data.db.entity.Concepto
 import aguilera.code.mantenimientogaraje.data.db.entity.Vehiculo
-import aguilera.code.mantenimientogaraje.data.ui.*
+import aguilera.code.mantenimientogaraje.data.ui.ConceptAdapter
+import aguilera.code.mantenimientogaraje.data.ui.ConceptClickInterface
+import aguilera.code.mantenimientogaraje.data.ui.GarageViewModel
 import aguilera.code.mantenimientogaraje.databinding.FragmentShowVehicleBinding
 import android.app.Dialog
-import android.content.ClipData.newIntent
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
 import android.view.*
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -21,12 +21,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAccessor
-import java.util.Locale.filter
 
 class ShowVehicleFragment : Fragment(), ConceptClickInterface {
 
@@ -73,7 +71,6 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface {
         marca = arguments?.getString("marca").toString()
         modelo = arguments?.getString("modelo").toString()
         getVehiculo()
-        getConceptsMoney()
 
         binding?.btnAdd?.setOnClickListener {
             activity?.let {
@@ -151,10 +148,11 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface {
                     if (n > 0) binding?.btnRemember?.visibility =
                         View.VISIBLE else binding?.btnRemember?.visibility = View.INVISIBLE
                     //---------------------------------------------------------------------
+
+                    getConceptsMoney()
                 }
             })
         }
-
     }
 
     override fun onConceptClick(concepto: Concepto) {
@@ -214,7 +212,7 @@ class ShowVehicleFragment : Fragment(), ConceptClickInterface {
 
     fun getConceptsMoney() {
         CoroutineScope(Dispatchers.IO).launch {
-
+            listN.clear()
             val formatter = DateTimeFormatter.ofPattern("d/M/y")
             lateinit var date: TemporalAccessor
             var nMonth = 0

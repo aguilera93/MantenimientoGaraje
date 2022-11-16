@@ -16,7 +16,7 @@ class MoneyPagerAdapter(
     var matricula = matricula
     var marca = marca
     var modelo = modelo
-    var listN = listN.distinct()
+    var listN = listN.distinct().sorted()
 
     override fun getItemCount(): Int = listN.size + 1
 
