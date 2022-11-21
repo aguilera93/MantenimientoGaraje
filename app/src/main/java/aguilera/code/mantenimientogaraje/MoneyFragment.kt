@@ -8,7 +8,6 @@ import aguilera.code.mantenimientogaraje.databinding.FragmentMoneyBinding
 import android.app.Dialog
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -28,7 +27,6 @@ class MoneyFragment : Fragment(), MoneyClickInterface {
 
     private var binding: FragmentMoneyBinding? = null
 
-    private var month: String? = null
     private var monthN: String? = null
 
     var matricula = ""
@@ -49,7 +47,6 @@ class MoneyFragment : Fragment(), MoneyClickInterface {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         arguments?.let {
-            month = it.getString("month")
             monthN = it.getString("monthN")
             matricula = it.getString("matricula").toString()
             marca = it.getString("marca").toString()
@@ -103,9 +100,15 @@ class MoneyFragment : Fragment(), MoneyClickInterface {
                                 }
                             }
                         }
-                    moneyAdapter.updateList(listC)
-                    if (listC.isEmpty()) {
-                        //binding?.fMoney?.visibility = View.GONE
+
+                    if (monthN?.toInt() == 0) {
+                        moneyAdapter.updateList(groupByConceptList(listC).distinct().sortedBy {
+                            it?.concepto
+                        } as List<Concepto>)
+                    } else {
+                        moneyAdapter.updateList(listC.distinct().sortedBy {
+                            it?.concepto
+                        })
                     }
                     binding?.total?.text = "TOTAL: ${money.toString()}€"
                 }
@@ -114,16 +117,17 @@ class MoneyFragment : Fragment(), MoneyClickInterface {
     }
 
     override fun onConceptClick(concepto: Concepto) {
-        val dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.menu_alert)
-        dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
-        var taller = concepto.taller
-        if (taller == "null" || taller?.length == 0) taller = "-"
+        if (monthN?.toInt() != 0) {
+            val dialog = Dialog(requireContext())
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setCancelable(true)
+            dialog.setContentView(R.layout.menu_alert)
+            dialog.getWindow()?.setBackgroundDrawableResource(android.R.color.transparent)
+            var taller = concepto.taller
+            if (taller == "null" || taller?.length == 0) taller = "-"
 
-        var kms = concepto.kms.toString()
-        if (kms.toString() == "null" || kms?.toString()?.length == 0) kms = "-"
+            var kms = concepto.kms.toString()
+            if (kms.toString() == "null" || kms?.toString()?.length == 0) kms = "-"
 
         var precio = concepto.precio.toString()
         if (precio == "null" || precio?.length == 0) precio = "-" else precio += "€"
@@ -142,16 +146,17 @@ class MoneyFragment : Fragment(), MoneyClickInterface {
 
             )
         )
-        val btnHistory = dialog.findViewById<FloatingActionButton>(R.id.btn_history)
-        val btnEdit = dialog.findViewById<FloatingActionButton>(R.id.btn_edit)
-        val btnDelete = dialog.findViewById<FloatingActionButton>(R.id.btn_delete)
-        btnHistory.visibility = View.GONE
-        (dialog.findViewById(R.id.txt_history) as TextView).visibility = View.GONE
-        btnEdit.visibility = View.GONE
-        (dialog.findViewById(R.id.txt_edit) as TextView).visibility = View.GONE
-        btnDelete.visibility = View.GONE
-        (dialog.findViewById(R.id.txt_delete) as TextView).visibility = View.GONE
-        dialog.show()
+            val btnHistory = dialog.findViewById<FloatingActionButton>(R.id.btn_history)
+            val btnEdit = dialog.findViewById<FloatingActionButton>(R.id.btn_edit)
+            val btnDelete = dialog.findViewById<FloatingActionButton>(R.id.btn_delete)
+            btnHistory.visibility = View.GONE
+            (dialog.findViewById(R.id.txt_history) as TextView).visibility = View.GONE
+            btnEdit.visibility = View.GONE
+            (dialog.findViewById(R.id.txt_edit) as TextView).visibility = View.GONE
+            btnDelete.visibility = View.GONE
+            (dialog.findViewById(R.id.txt_delete) as TextView).visibility = View.GONE
+            dialog.show()
+        }
     }
 
     fun changeFragmentActionBar() {
@@ -177,6 +182,33 @@ class MoneyFragment : Fragment(), MoneyClickInterface {
         return false
     }
 
+    fun groupByConceptList(listC: ArrayList<Concepto>): ArrayList<Concepto?> {
+        val listCo = arrayListOf<Concepto?>()
+        var lC1: Concepto? = null
+        var lC2: Concepto? = null
+        var lC3 = 0f
+        var n = 0
+        listC.distinct().sortedBy {
+            it.concepto
+        }.forEach {
+            n++
+            lC2 = it
+            if (lC1?.concepto != lC2?.concepto && lC1 != null) {
+                lC1?.precio = lC3
+                listCo.add(lC1)
+                lC3 = 0f
+            }
+            lC1 = it
+            lC3 += it.precio!!
+            if (n == listC.size) {
+                lC2?.precio = lC3
+                listCo.add(lC2)
+                lC3 = 0f
+            }
+        }
+        return listCo
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_menu, menu)
     }
@@ -194,14 +226,13 @@ class MoneyFragment : Fragment(), MoneyClickInterface {
     companion object {
 
         @JvmStatic
-        fun newInstance(arg1: String, arg2: String, arg3: String, arg4: String, arg5: String) =
+        fun newInstance(arg1: String, arg2: String, arg3: String, arg4: String) =
             MoneyFragment().apply {
                 arguments = Bundle().apply {
-                    putString("month", arg1)
-                    putString("monthN", arg2)
-                    putString("matricula", arg3)
-                    putString("marca", arg4)
-                    putString("modelo", arg5)
+                    putString("monthN", arg1)
+                    putString("matricula", arg2)
+                    putString("marca", arg3)
+                    putString("modelo", arg4)
                 }
             }
     }

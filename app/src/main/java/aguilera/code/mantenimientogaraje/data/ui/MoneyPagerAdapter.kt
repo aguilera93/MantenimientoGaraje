@@ -23,7 +23,6 @@ class MoneyPagerAdapter(
     override fun createFragment(position: Int): Fragment {
         if (position == 0) {
             return MoneyFragment.newInstance(
-                "Año",
                 "0",
                 matricula,
                 marca,
@@ -31,7 +30,6 @@ class MoneyPagerAdapter(
             )
         }
         return MoneyFragment.newInstance(
-            "Año",
             listN[position - 1].toString(),
             matricula,
             marca,
